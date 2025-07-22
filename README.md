@@ -32,3 +32,15 @@ git clone https://github.com/<ton-username>/timora.git
 cd timora
 flutter pub get
 flutter run
+
+
+## 🛠️ Organisation du code
+
+lib/
+├── theme/          # Thèmes (dark, light, mint, etc.)
+├── components/     # Composants atomiques & moléculaires
+├── screens/        # Pages principales
+├── providers/      # Gestion de l’état (ThemeSwitcher, etc.)
+└── main.dart       # Point d’entrée
+
+
