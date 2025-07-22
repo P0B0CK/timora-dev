@@ -37,11 +37,13 @@ flutter run
 
 ## 🛠️ Organisation du code
 
+```bash
 lib/
 ├── theme/          # Thèmes (dark, light, mint, etc.)
 ├── components/     # Composants atomiques & moléculaires
 ├── screens/        # Pages principales
 ├── providers/      # Gestion de l’état (ThemeSwitcher, etc.)
 └── main.dart       # Point d’entrée
+```
 
 
