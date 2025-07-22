@@ -1,16 +1,34 @@
-# timora
+# 📆 Timora
 
-L'agenda qui respire
+**Timora** est une application de calendrier-agenda développée avec Flutter.  
+Elle propose une interface épurée, fluide et responsive, pensée pour organiser ses journées avec sérénité.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ Fonctionnalités prévues
 
-A few resources to get you started if this is your first Flutter project:
+- 🔄 Synchronisation d'événements (Google Calendar, etc.)
+- 📅 Vue par jour, semaine, mois, année
+- 👥 Espaces partagés (famille, amis, travail)
+- 📝 To-do list, bloc-notes, liste de courses
+- 🎨 Thèmes personnalisables (clair, sombre, mint, etc.)
+- 💬 Petites animations fluides pour une expérience agréable
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📦 Stack technique
+
+- **Flutter** (UI multiplateforme)
+- **Dart** (logique métier)
+- **Firebase** (auth, stockage, base de données – à venir)
+- **Android Studio** (environnement de développement)
+
+---
+
+## 🚀 Lancer l'application en local
+
+```bash
+git clone https://github.com/<ton-username>/timora.git
+cd timora
+flutter pub get
+flutter run
