@@ -32,7 +32,8 @@ git clone https://github.com/<ton-username>/timora.git
 cd timora
 flutter pub get
 flutter run
-
+```
+---
 
 ## 🛠️ Organisation du code
 
