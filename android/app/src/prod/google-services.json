@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "191082466402",
+    "project_id": "timora-prod",
+    "storage_bucket": "timora-prod.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191082466402:android:b9d15602d3f536a6cd953b",
+        "android_client_info": {
+          "package_name": "timora.prod.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcXxEGN-nwiS26OR5SVTA_uJfNOoySefY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,18 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'providers/theme_manager.dart';
 import 'providers/theme_switcher.dart';
 import 'pages/home_page.dart';
 import 'ui/organisms/app_top_bar.dart';
 import 'ui/organisms/app_bottom_bar.dart';
 
+import 'env.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+
+  const String flavor = String.fromEnvironment('FLAVOR');
+  late AppEnvironment environment;
+  print("FLAVOR = $flavor");
+
+  switch (flavor) {
+    case 'dev' :
+        environment = AppEnvironment.dev;
+        break;
+    case 'staging' :
+            environment = AppEnvironment.staging;
+            break;
+    case 'prod' :
+            environment = AppEnvironment.prod;
+            break;
+    default :
+        throw Exception("Unknow flavor : $flavor");
+  }
+
+  AppConfig.initialize(environment);
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
+
+
+
   runApp(
       MultiProvider(
         providers: [
@@ -30,6 +58,8 @@ void main() async {
 }
 
 class TimoraApp extends StatelessWidget {
+  final String environment ="dev";
+
   const TimoraApp({super.key});
 
   @override
