@@ -1,0 +1,33 @@
+name: Flutter Build (Dev)
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  build:
+    name: Build Flutter Dev APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK (Dev flavor)
+        run: flutter build apk --flavor dev --dart-define=FLAVOR=dev -t lib/main.dart
+
+      - name: Archive APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-dev-debug-apk
+          path: build/app/outputs/flutter-apk/app-dev-release.apk

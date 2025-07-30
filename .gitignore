@@ -42,8 +42,12 @@ web/build/
 
 # Firebase
 **/google-services.json
+android/app/src/**/google-services.json
 **/GoogleService-Info.plist
 .firebase/
+
+# Build
+build/
 
 # Logs & Secrets
 *.log
