@@ -1,57 +1,57 @@
-# Flutter/Dart
+# Flutter & Dart
 .dart_tool/
-.packages
-.pub/
-build/
 .flutter-plugins
 .flutter-plugins-dependencies
-.melos_tool/
-analysis_options.yaml
-*.iml
-
-# IDEs
-# Android Studio / IntelliJ
-.idea/
-*.iws
-*.ipr
-*.iml
-
-# VS Code
-.vscode/
-
-# macOS
-.DS_Store
-
-# Linux
-*.swp
-
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
+.packages
+build/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Runner.xcodeproj/project.xcworkspace/
+ios/Pods/
+pubspec.lock
+.melody/
 
 # Android
 android/.gradle/
 android/app/build/
 android/local.properties
 android/.idea/
+*.iml
 
-# iOS
-ios/Flutter/Flutter.podspec
-ios/Pods/
-ios/.symlinks/
-ios/Flutter/Generated.xcconfig
-ios/Flutter/App.framework
-ios/Flutter/Flutter.framework
-ios/Flutter/engine/
-ios/Flutter/flutter_export_environment.sh
-ios/Runner.xcworkspace
-ios/Flutter/ephemeral/
+# VS Code
+.vscode/
+
+# Xcode
+DerivedData/
+xcuserdata/
+*.xcworkspace
+*.xcuserstate
+
+# macOS
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Flutter/ephemeral/
+
+# Windows
+windows/flutter/
+windows/runner/ephemeral/
 
 # Web
 web/.dart_tool/
 web/build/
 
-# Other
+# Firebase
+**/google-services.json
+**/GoogleService-Info.plist
+.firebase/
+
+# Logs & Secrets
 *.log
-*.tmp
+.env
+.env.*
+
+# JetBrains (Android Studio)
+.idea/
+
+# Others
+.sentryclirc
