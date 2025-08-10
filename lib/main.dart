@@ -1,91 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'providers/theme_manager.dart';
-import 'providers/theme_switcher.dart';
-import 'pages/home_page.dart';
-import 'ui/organisms/app_top_bar.dart';
-import 'ui/organisms/app_bottom_bar.dart';
+import 'package:provider/provider.dart';
 
+import 'firebase_options.dart';
 import 'env.dart';
+import 'app/timora_app.dart';
 
-void main() async {
+// ✅ Nouveau manager unifié
+import 'theme/theme_manager.dart';
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp();
+  // ✅ Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-  const String flavor = String.fromEnvironment('FLAVOR');
-  late AppEnvironment environment;
-  print("FLAVOR = $flavor");
+  // 🔧 Gestion de l’environnement avec fallback sûr
+  const String rawFlavor = String.fromEnvironment('FLAVOR');
+  final String flavor = (rawFlavor.isEmpty) ? 'dev' : rawFlavor;
+  debugPrint("FLAVOR = $flavor");
 
-  switch (flavor) {
-    case 'dev' :
-        environment = AppEnvironment.dev;
-        break;
-    case 'staging' :
-            environment = AppEnvironment.staging;
-            break;
-    case 'prod' :
-            environment = AppEnvironment.prod;
-            break;
-    default :
-        throw Exception("Unknow flavor : $flavor");
-  }
+  final environment = switch (flavor) {
+    'dev' => AppEnvironment.dev,
+    'staging' => AppEnvironment.staging,
+    'prod' => AppEnvironment.prod,
+    _ => AppEnvironment.dev, // fallback final
+  };
 
   AppConfig.initialize(environment);
 
+  // 🔒 Orientation uniquement portrait
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
 
-
-
+  // 🚀 Lancement de l'app
   runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => ThemeManager()),
-          ChangeNotifierProxyProvider<ThemeManager, ThemeSwitcher>(
-            create: (context) => ThemeSwitcher(context.read<ThemeManager>()),
-            update: (context, themeManager, previous) =>
-            previous!..themeManager = themeManager,
-          ),
-        ],
-        child: const TimoraApp(),
-      )
-
+    ChangeNotifierProvider<ThemeManager>(
+      // Optionnel: ThemeManager(initialThemeId: 'classic-dark')
+      create: (_) => ThemeManager(),
+      child: const TimoraApp(), // 🧠 Auth + Routing + App UI
+    ),
   );
-}
-
-class TimoraApp extends StatelessWidget {
-  final String environment ="dev";
-
-  const TimoraApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<ThemeManager>(
-      builder: (context, themeManager, _) {
-        return MaterialApp(
-          title: 'Timora',
-          debugShowCheckedModeBanner: false,
-          theme: themeManager.currentTheme.themeData,
-          home: const MainLayout(),
-        );
-      },
-    );
-  }
-}
-
-class MainLayout extends StatelessWidget {
-  const MainLayout({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const AppTopBar(), // ta top bar personnalisée
-      body: const HomePage(),    // ton contenu principal
-      bottomNavigationBar: const AppBottomBar(), // ta bottom bar personnalisée
-    );
-  }
 }

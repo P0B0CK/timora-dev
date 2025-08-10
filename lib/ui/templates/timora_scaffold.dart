@@ -1,3 +1,5 @@
+// Interface
+
 import 'package:flutter/material.dart';
 import '../organisms/app_top_bar.dart';
 import '../organisms/app_bottom_bar.dart';
@@ -15,7 +17,7 @@ class TimoraScaffold extends StatelessWidget {
         child: AppTopBar(),
       ),
       body: child,
-      bottomNavigationBar: const BottomAppBar(),
+      bottomNavigationBar: const AppBottomBar(),
     );
   }
 }

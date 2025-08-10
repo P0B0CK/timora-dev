@@ -44,6 +44,7 @@ web/build/
 **/google-services.json
 **/GoogleService-Info.plist
 .firebase/
+lib/firebase_options.dart
 
 # Logs & Secrets
 *.log
