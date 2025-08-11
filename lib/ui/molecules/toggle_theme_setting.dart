@@ -2,7 +2,7 @@
 // lib/settings/widgets/toggle_theme_setting.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:timora/theme/theme_manager.dart';
+import 'package:timora/theme/theme_manager.dart'; // ✅ remplace themes.dart
 import 'setting_item.dart';
 
 class ToggleThemeSetting extends StatelessWidget {
@@ -16,8 +16,7 @@ class ToggleThemeSetting extends StatelessWidget {
     // ⚙️ actions (pas d'écoute)
     final manager = context.read<ThemeManager>();
 
-    // Optionnel : si jamais tu ajoutes des thèmes “orphelins”, gère l’état disabled ici.
-    // Dans notre catalogue, chaque thème a un frère → true.
+    // Si un thème n’a pas de frère, on pourrait désactiver le switch.
     const hasBrother = true;
 
     return SettingItem(

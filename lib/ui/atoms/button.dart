@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:timora/theme/theme_tokens.dart';
+import 'package:flutter/services.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:timora/theme/colors_extension.dart';
+import 'package:timora/theme/fonts.dart';
 
-enum ButtonType {
-  primary,
-  secondary,
-  outlined,
-}
+enum ButtonType { primary, secondary, outlined }
 
-/// Composant bouton Timora
-class AppButton extends StatelessWidget {
+class AppButton extends StatefulWidget {
   final String label;
   final VoidCallback onPressed;
   final bool isLoading;
@@ -27,89 +25,115 @@ class AppButton extends StatelessWidget {
   });
 
   @override
+  State<AppButton> createState() => _AppButtonState();
+}
+
+class _AppButtonState extends State<AppButton> {
+  double _scale = 1.0;
+
+  void _onTapDown(TapDownDetails _) {
+    if (widget.isDisabled || widget.isLoading) return;
+    setState(() => _scale = 0.96);
+  }
+
+  void _onTapUp(TapUpDetails _) {
+    setState(() => _scale = 1.0);
+  }
+
+  void _onTapCancel() {
+    setState(() => _scale = 1.0);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final textStyle = theme.textTheme.labelLarge;
-    final tokens = theme.extension<TimoraTokens>()!;
+    final tokens = theme.extension<AppColors>();
+    final scheme = theme.colorScheme;
 
-    final disabled = isDisabled || isLoading;
+    final disabled = widget.isDisabled || widget.isLoading;
 
-    // 🎨 Attribution dynamique des couleurs selon le type
     late final Color bgColor;
     late final Color fgColor;
     BorderSide border = BorderSide.none;
+    TextStyle textStyle;
 
-    switch (type) {
+    switch (widget.type) {
       case ButtonType.primary:
-        bgColor = tokens.primary;
-        fgColor = tokens.textAuto; // texte lisible auto
+        bgColor = tokens?.primary ?? scheme.primary;
+        fgColor = tokens?.onPrimary ?? scheme.onPrimary;
+        textStyle = TimoraTextStyles.labelLarge.copyWith(color: fgColor);
         break;
-
       case ButtonType.secondary:
-        bgColor = tokens.secondary;
-        fgColor = tokens.textAuto; // lisible sur secondaire
+        bgColor = tokens?.secondary ?? scheme.secondary;
+        fgColor = tokens?.onSecondary ?? scheme.onSecondary;
+        textStyle = TimoraTextStyles.labelLarge.copyWith(color: fgColor);
         break;
-
       case ButtonType.outlined:
         bgColor = Colors.transparent;
-        fgColor = tokens.primary;
+        fgColor = tokens?.primary ?? scheme.primary;
         border = BorderSide(color: fgColor, width: 2);
+        textStyle = theme.textTheme.labelLarge!.copyWith(color: fgColor);
         break;
     }
 
-    return ElevatedButton(
-      onPressed: disabled ? null : onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: bgColor,
-        foregroundColor: fgColor,
-        elevation: (disabled || type == ButtonType.outlined) ? 0 : 2,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(34),
-          side: border,
-        ),
-        disabledBackgroundColor: bgColor.withOpacity(0.3),
-        disabledForegroundColor: fgColor.withOpacity(0.6),
-        textStyle: textStyle,
-      ),
-      child: isLoading
-          ? SizedBox(
-        width: 20,
-        height: 20,
-        child: CircularProgressIndicator(
-          strokeWidth: 2.2,
-          valueColor: AlwaysStoppedAnimation<Color>(fgColor),
-        ),
-      )
-          : Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) ...[
-            Icon(icon, size: 20),
-            const SizedBox(width: 8),
-          ],
-          if (type == ButtonType.primary)
-            Stack(
-              children: [
-                Text(
-                  label,
-                  style: textStyle?.copyWith(
-                    foreground: Paint()
-                      ..style = PaintingStyle.stroke
-                      ..strokeWidth = 1.5
-                      ..color = tokens.tertiary,
-                  ),
-                ),
-                Text(
-                  label,
-                  style: textStyle?.copyWith(color: fgColor),
-                ),
-              ],
-            )
-          else
-            Text(label),
+    final child = widget.isLoading
+        ? LoadingAnimationWidget.inkDrop(
+      color: fgColor,
+      size: 22,
+    )
+        : Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (widget.icon != null) ...[
+          Icon(widget.icon, size: 20, color: fgColor),
+          const SizedBox(width: 8),
         ],
+        Text(widget.label, style: textStyle),
+      ],
+    );
+
+    final container = Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(9999),
+        border: border == BorderSide.none
+            ? null
+            : Border.all(color: border.color, width: border.width),
       ),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      child: child,
+    );
+
+    final scaled = AnimatedScale(
+      scale: _scale,
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.easeOut,
+      child: Opacity(
+        opacity: widget.isDisabled ? 0.6 : 1.0, // <- seulement si disabled
+        child: container,
+      ),
+    );
+
+    final gesture = GestureDetector(
+      onTapDown: disabled ? null : _onTapDown,
+      onTapUp: disabled ? null : _onTapUp,
+      onTapCancel: disabled ? null : _onTapCancel,
+      onTap: disabled
+          ? null
+          : () {
+        HapticFeedback.lightImpact();
+        widget.onPressed();
+      },
+      child: scaled,
+    );
+
+    // Accessibilité
+    return Semantics(
+      button: true,
+      enabled: !disabled,
+      label: widget.label,
+      value: widget.isLoading ? 'Chargement' : null,
+      child: gesture,
     );
   }
 }

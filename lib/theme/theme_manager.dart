@@ -1,154 +1,69 @@
+// FRONTEND
+// lib/theme/theme_manager.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'colors.dart';
-import 'theme_tokens.dart';
 
-/// Entrée de registre pour un thème (membre d'un duo via duoId).
-class AppThemeEntry {
-  final String id;          // ex: "classic-dark"
-  final String duoId;       // ex: "classic" (groupe pair)
-  final String name;        // ex: "Classic Dark"
-  final bool isDark;        // dark = principal
-  final bool isPremium;     // premium ?
-  final TimoraPalette palette;
+import 'themes.dart';                 // contient ThemeModel + themeCatalog
+import 'timora_theme.dart';           // fabrique ThemeData
+import 'colors_extension.dart';       // AppColors (ThemeExtension)
 
-  const AppThemeEntry({
-    required this.id,
-    required this.duoId,
-    required this.name,
-    required this.isDark,
-    required this.isPremium,
-    required this.palette,
-  });
-}
-
-/// Registre des thèmes disponibles (ajoute/retire ici).
-const List<AppThemeEntry> _themeCatalog = [
-  AppThemeEntry(
-    id: 'classic-dark',
-    duoId: 'classic',
-    name: 'Classic Dark',
-    isDark: true,
-    isPremium: false,
-    palette: timoraClassic,
-  ),
-  AppThemeEntry(
-    id: 'classic-light',
-    duoId: 'classic',
-    name: 'Classic Light',
-    isDark: false,
-    isPremium: false,
-    palette: timoraClassic,
-  ),
-  AppThemeEntry(
-    id: 'twinbw-dark',
-    duoId: 'twinbw',
-    name: 'Twin Black',
-    isDark: true,
-    isPremium: true, // exemple premium
-    palette: timoraTwinBW,
-  ),
-  AppThemeEntry(
-    id: 'twinbw-light',
-    duoId: 'twinbw',
-    name: 'Twin White',
-    isDark: false,
-    isPremium: true,
-    palette: timoraTwinBW,
-  ),
-];
-
-AppThemeEntry _brotherOf(AppThemeEntry e) {
-  return _themeCatalog
-      .firstWhere((x) => x.duoId == e.duoId && x.isDark != e.isDark);
-}
-
-/// Paramètres dynamiques de rendu du thème (ex: accent interchangeable).
-@immutable
-class ThemeParams {
-  final Color? accent; // null => accent par défaut de la palette
-  const ThemeParams({this.accent});
-
-  ThemeParams copyWith({Color? accent}) => ThemeParams(
-    accent: accent ?? this.accent,
-  );
-}
-
-/// Un seul ChangeNotifier pour tout gérer.
 class ThemeManager extends ChangeNotifier {
-  late AppThemeEntry _current;
-  ThemeParams _params = const ThemeParams();
+  ThemeManager({
+    ThemeModel? initial,
+    List<ThemeModel> catalog = const [],
+  })  : _catalog = catalog.isNotEmpty ? catalog : themeCatalog,
+        _current = initial ?? (catalog.isNotEmpty ? catalog.first : themeCatalog.first);
 
-  /// Optionnel :
-  /// - [initialThemeId] si tu veux démarrer sur un thème précis
-  /// - [initialAccent] si tu veux forcer un accent dès le boot
-  ThemeManager({String? initialThemeId, Color? initialAccent}) {
-    if (initialThemeId != null) {
-      final found = _themeCatalog.where((e) => e.id == initialThemeId);
-      _current = found.isNotEmpty
-          ? found.first
-          : _themeCatalog.firstWhere((e) => e.isDark); // fallback dark
-    } else {
-      _current = _themeCatalog.firstWhere((e) => e.isDark); // dark = principal
-    }
-    if (initialAccent != null) {
-      _params = _params.copyWith(accent: initialAccent);
-    }
-  }
+  // --- État interne
+  final List<ThemeModel> _catalog;
+  ThemeModel _current;
+  AppColors? _override; // permet de surcharger finement les tokens (ex: primary uniquement)
 
-  // ======================
-  //        GETTERS
-  // ======================
-  AppThemeEntry get currentEntry => _current;
+  // --- Sélecteurs / Getters
+  ThemeModel get current => _current;
+  List<ThemeModel> get catalog => List.unmodifiable(_catalog);
   bool get isDark => _current.isDark;
-  bool get isPremium => _current.isPremium;
-  ThemeParams get params => _params;
 
-  /// ThemeData prêt pour MaterialApp.theme
-  ThemeData get theme => buildTimoraTheme(
-    palette: _current.palette,
-    feedback: defaultFeedback,
-    isDark: _current.isDark,
-  ).copyWith(
-    // override d’accent éventuel via tokens
-    colorScheme: buildTimoraTheme(
-      palette: _current.palette,
-      feedback: defaultFeedback,
-      isDark: _current.isDark,
-    ).colorScheme.copyWith(
-      primary: _params.accent ??
-          _current.palette.primaryColor, // garde le seed
-    ),
-  );
+  /// ThemeData construit depuis le modèle + éventuelle surcharge de tokens
+  ThemeData get themeData => TimoraTheme.build(_current, override: _override);
 
-  /// Liste simple si tu veux afficher un sélecteur dans l'UI
-  List<AppThemeEntry> get available => _themeCatalog;
-
-  // ======================
-  //       ACTIONS
-  // ======================
-  bool setThemeById(String id) {
-    final found = _themeCatalog.where((e) => e.id == id);
-    if (found.isEmpty) return false;
-    if (identical(_current, found.first)) return true;
-    _current = found.first;
-    notifyListeners();
-    return true;
+  // --- Mutations
+  /// Activer un thème par son id
+  void setById(String id) {
+    final found = _catalog.firstWhere((t) => t.id == id, orElse: () => _current);
+    if (!identical(found, _current)) {
+      _current = found;
+      notifyListeners();
+    }
   }
 
-  void toggleBrother() {
-    _current = _brotherOf(_current);
+  /// Bascule vers le "frère" (même duoId), ex: light <-> dark
+  void toggleDuo() {
+    final siblings = _catalog.where((t) => t.duoId == _current.duoId).toList();
+    if (siblings.length < 2) return;
+    final other = siblings.firstWhere((t) => t.isDark != _current.isDark, orElse: () => _current);
+    if (other.id != _current.id) {
+      _current = other;
+      notifyListeners();
+    }
+  }
+
+  /// Alias pour compat avec ton code existant
+  void toggleBrother() => toggleDuo();
+
+  /// Surcharger dynamiquement des couleurs (tokens) sans changer la palette
+  /// Exemple: overrideColors((c) => c.copyWith(primary: const Color(0xFF4E7EFF)));
+  void overrideColors(AppColors Function(AppColors) mutate) {
+    final baseColors = AppColors.fromThemeModel(_current);
+    _override = mutate(baseColors);
     notifyListeners();
   }
 
-  void setAccent(Color? accent) {
-    _params = _params.copyWith(accent: accent);
-    notifyListeners();
+  /// Réinitialiser la surcharge éventuelle
+  void clearOverrides() {
+    if (_override != null) {
+      _override = null;
+      notifyListeners();
+    }
   }
-
-// ======================
-//  (Optionnel) Persistance
-// ======================
-// Tu peux brancher SharedPreferences ici :
-// Future<void> loadPrefs() async { ... }
-// Future<void> savePrefs() async { ... }
 }

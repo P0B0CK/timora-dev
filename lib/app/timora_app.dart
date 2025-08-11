@@ -9,8 +9,8 @@ import 'package:timora/ui/organisms/register_page.dart';
 import 'package:timora/ui/pages/home_page.dart';
 import 'package:timora/ui/templates/timora_scaffold.dart';
 
-// ✅ nouveau manager unifié
-import 'package:timora/theme/theme_manager.dart';
+// ✅ utiliser le bon manager
+import 'package:timora/theme/theme_manager.dart'; // <- AU LIEU de themes.dart
 
 class TimoraApp extends StatelessWidget {
   const TimoraApp({super.key});
@@ -22,8 +22,7 @@ class TimoraApp extends StatelessWidget {
         return MaterialApp(
           title: 'Timora',
           debugShowCheckedModeBanner: false,
-          // ✅ le ThemeData vient directement du manager
-          theme: tm.theme,
+          theme: tm.themeData, // <- AU LIEU de tm.theme
           routes: {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
@@ -38,7 +37,6 @@ class TimoraApp extends StatelessWidget {
                 );
               }
               if (snapshot.hasData) {
-                // ✅ Utilise TimoraScaffold pour inclure les barres
                 return const TimoraScaffold(child: HomePage());
               }
               return const LoginPage();

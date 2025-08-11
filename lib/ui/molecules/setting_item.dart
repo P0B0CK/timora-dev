@@ -2,7 +2,7 @@
 // lib/settings/widgets/setting_item.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:timora/theme/theme_manager.dart';
+import 'package:timora/theme/themes.dart';
 import 'package:timora/theme/theme_tokens.dart';
 
 /// Élément de réglage avec icône, label et toggle switch

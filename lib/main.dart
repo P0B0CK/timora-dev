@@ -1,48 +1,32 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-import 'firebase_options.dart';
-import 'env.dart';
-import 'app/timora_app.dart';
-
-// ✅ Nouveau manager unifié
 import 'theme/theme_manager.dart';
+import 'theme/themes.dart';              // pour themeCatalog
+import 'app/timora_app.dart';            // ton App root
+import 'firebase_options.dart';          // généré par FlutterFire CLI
+import 'env.dart';                       // AppConfig (dev/staging/prod)
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Firebase
+  // 1) Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // 🔧 Gestion de l’environnement avec fallback sûr
-  const String rawFlavor = String.fromEnvironment('FLAVOR');
-  final String flavor = (rawFlavor.isEmpty) ? 'dev' : rawFlavor;
-  debugPrint("FLAVOR = $flavor");
+  // 2) Config d'environnement (lit --dart-define=FLAVOR)
+  AppConfig.initializeFromDartDefine();
 
-  final environment = switch (flavor) {
-    'dev' => AppEnvironment.dev,
-    'staging' => AppEnvironment.staging,
-    'prod' => AppEnvironment.prod,
-    _ => AppEnvironment.dev, // fallback final
-  };
-
-  AppConfig.initialize(environment);
-
-  // 🔒 Orientation uniquement portrait
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
-
-  // 🚀 Lancement de l'app
+  // 3) Démarrage de l'app avec le ThemeManager
   runApp(
-    ChangeNotifierProvider<ThemeManager>(
-      // Optionnel: ThemeManager(initialThemeId: 'classic-dark')
-      create: (_) => ThemeManager(),
-      child: const TimoraApp(), // 🧠 Auth + Routing + App UI
+    ChangeNotifierProvider(
+      create: (_) => ThemeManager(
+        initial: themeCatalog.firstWhere((t) => t.id == 'classic-dark'),
+      ),
+      child: const TimoraApp(),
     ),
   );
 }

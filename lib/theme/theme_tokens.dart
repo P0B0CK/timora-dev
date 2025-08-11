@@ -1,51 +1,72 @@
-// lib/theme/theme_tokens.dart
 import 'package:flutter/material.dart';
-import 'colors.dart';
 
 /// ===============================
 ///  ThemeExtension: TimoraTokens
 /// ===============================
-/// Expose des "tokens" prêts à consommer dans l'UI.
-/// - bg        : fond courant
-/// - primary   : accent principal
-/// - secondary : accent secondaire
-/// - tertiary  : accent tertiaire / surfaces subtiles
-/// - textAuto  : texte lisible (auto noir/blanc selon le fond)
-/// - textBrand : texte "de marque" (identité visuelle)
+/// Les "rôles" de couleurs stables dans l'UI.
+/// Chaque rôle est rempli par une couleur de la palette selon
+/// le thème (dark/light).
 @immutable
 class TimoraTokens extends ThemeExtension<TimoraTokens> {
   final Color bg;
+  final Color surface;
+  final Color surfaceAlt;
+
   final Color primary;
   final Color secondary;
   final Color tertiary;
-  final Color textAuto;
+
+  final Color textPrimary;
+  final Color textSecondary;
   final Color textBrand;
+
+  final Color success;
+  final Color warning;
+  final Color error;
 
   const TimoraTokens({
     required this.bg,
+    required this.surface,
+    required this.surfaceAlt,
     required this.primary,
     required this.secondary,
     required this.tertiary,
-    required this.textAuto,
+    required this.textPrimary,
+    required this.textSecondary,
     required this.textBrand,
+    required this.success,
+    required this.warning,
+    required this.error,
   });
 
   @override
   TimoraTokens copyWith({
     Color? bg,
+    Color? surface,
+    Color? surfaceAlt,
     Color? primary,
     Color? secondary,
     Color? tertiary,
-    Color? textAuto,
+    Color? textPrimary,
+    Color? textSecondary,
     Color? textBrand,
+    Color? success,
+    Color? warning,
+    Color? error,
   }) {
     return TimoraTokens(
       bg: bg ?? this.bg,
+      surface: surface ?? this.surface,
+      surfaceAlt: surfaceAlt ?? this.surfaceAlt,
       primary: primary ?? this.primary,
       secondary: secondary ?? this.secondary,
       tertiary: tertiary ?? this.tertiary,
-      textAuto: textAuto ?? this.textAuto,
+      textPrimary: textPrimary ?? this.textPrimary,
+      textSecondary: textSecondary ?? this.textSecondary,
       textBrand: textBrand ?? this.textBrand,
+      success: success ?? this.success,
+      warning: warning ?? this.warning,
+      error: error ?? this.error,
     );
   }
 
@@ -54,95 +75,17 @@ class TimoraTokens extends ThemeExtension<TimoraTokens> {
     if (other is! TimoraTokens) return this;
     return TimoraTokens(
       bg: Color.lerp(bg, other.bg, t)!,
+      surface: Color.lerp(surface, other.surface, t)!,
+      surfaceAlt: Color.lerp(surfaceAlt, other.surfaceAlt, t)!,
       primary: Color.lerp(primary, other.primary, t)!,
       secondary: Color.lerp(secondary, other.secondary, t)!,
       tertiary: Color.lerp(tertiary, other.tertiary, t)!,
-      textAuto: Color.lerp(textAuto, other.textAuto, t)!,
+      textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
+      textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       textBrand: Color.lerp(textBrand, other.textBrand, t)!,
+      success: Color.lerp(success, other.success, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
+      error: Color.lerp(error, other.error, t)!,
     );
   }
-}
-
-// Choix automatique d'une couleur de texte lisible sur un fond
-Color _autoOn(Color bg) =>
-    bg.computeLuminance() > 0.5 ? const Color(0xDD000000) : Colors.white;
-
-/// ===============================================
-///  Résolution palette -> tokens (duo dark/light)
-/// ===============================================
-TimoraTokens resolveTokens({
-  required TimoraPalette palette,
-  required bool isDark,
-  Color? overrideAccent,
-}) {
-  if (isDark) {
-    final bg = palette.backgroundColor;
-    return TimoraTokens(
-      bg: bg,
-      primary: overrideAccent ?? palette.primaryColor, // 🌙 vert fluo
-      secondary: palette.secondaryColor,
-      tertiary: palette.tertiaryColor,
-      textAuto: _autoOn(bg),
-      textBrand: palette.textColor,
-    );
-  } else {
-    final bg = palette.tertiaryColor; // ex: fond clair
-    return TimoraTokens(
-      bg: bg,
-      primary: overrideAccent ?? palette.secondaryColor, // ☀ violet myth
-      secondary: palette.backgroundColor,
-      tertiary: palette.primaryColor,
-      textAuto: _autoOn(bg),
-      textBrand: _autoOn(bg),
-    );
-  }
-}
-
-
-/// ===============================================
-///  Factory ThemeData (Material 3)
-/// ===============================================
-ThemeData buildTimoraTheme({
-  required TimoraPalette palette,
-  required FeedbackPalette feedback,
-  required bool isDark,
-  Color? accentOverride,
-  TextTheme? textTheme, // Injecte tes GoogleFonts si besoin
-}) {
-  final tokens = resolveTokens(
-    palette: palette,
-    isDark: isDark,
-    overrideAccent: accentOverride,
-  );
-
-  final baseScheme = ColorScheme.fromSeed(
-    seedColor: tokens.primary,
-    brightness: isDark ? Brightness.dark : Brightness.light,
-  );
-
-  final scheme = baseScheme.copyWith(
-    primary: tokens.primary,
-    onPrimary: tokens.textAuto,
-    secondary: tokens.secondary,
-    onSecondary: tokens.textAuto,
-    background: tokens.bg,
-    surface: tokens.bg,
-    onSurface: tokens.textAuto,
-    error: feedback.error,
-    onError: tokens.textAuto,
-  );
-
-  final baseText = (textTheme ?? const TextTheme()).apply(
-    bodyColor: tokens.textBrand,    // style "de marque"
-    displayColor: tokens.textBrand,
-  );
-
-  return ThemeData(
-    useMaterial3: true,
-    brightness: scheme.brightness,
-    colorScheme: scheme,
-    scaffoldBackgroundColor: tokens.bg,
-    textTheme: baseText,
-    extensions: [tokens],
-  );
 }

@@ -24,7 +24,7 @@ class TimoraTextStyles {
 
   static final labelLarge = GoogleFonts.quicksand(
     fontSize: 16,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w800,
   );
 
   static final labelBold = GoogleFonts.quicksand(

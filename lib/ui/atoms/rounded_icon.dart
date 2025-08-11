@@ -1,4 +1,7 @@
+// FRONTEND
+// lib/ui/atoms/rounded_icon.dart
 import 'package:flutter/material.dart';
+import 'package:timora/theme/theme_tokens.dart';
 
 class RoundedIcon extends StatelessWidget {
   final IconData icon;
@@ -16,24 +19,49 @@ class RoundedIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).colorScheme.primary;
-    final surfaceColor = Theme.of(context).colorScheme.surface;
+    final theme = Theme.of(context);
+    final tokens = theme.extension<TimoraTokens>();
+
+    // brightness pour savoir si on est en dark/light
+    final isDark = theme.brightness == Brightness.dark;
+
+    // 🎨 Règle:
+    // - Dark: bg = primary (vert fluo), icon = secondary (violet myth)
+    // - Light: bg = primary (violet myth), icon = tertiary (vert fluo)
+    final Color bgColor = tokens?.primary ?? theme.colorScheme.primary;
+    final Color iconColor = isDark
+        ? (tokens?.secondary ?? theme.colorScheme.secondary)
+        : (tokens?.tertiary ?? theme.colorScheme.tertiary);
+
+    // état visuel disabled
+    final bool disabled = onPressed == null;
+    final double opacity = disabled ? 0.5 : 1.0;
 
     return IconButton(
-      icon: Container(
-        decoration: BoxDecoration(
-          color: surfaceColor, // fond qui s'adapte au thème
-          shape: BoxShape.circle,
-        ),
-        padding: const EdgeInsets.all(8),
-        child: Icon(
-          icon,
-          color: primaryColor, // icône dans la couleur primaire
-          size: size,
-        ),
-      ),
       onPressed: onPressed,
       tooltip: tooltip,
+      style: IconButton.styleFrom(
+        // assure une cible tactile confortable
+        minimumSize: const Size(40, 40),
+        padding: EdgeInsets.zero,
+      ),
+      icon: Opacity(
+        opacity: opacity,
+        child: Container(
+          width: size + 16,  // 8px de padding interne tout autour
+          height: size + 16,
+          decoration: BoxDecoration(
+            color: bgColor,
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Icon(
+            icon,
+            color: iconColor,
+            size: size,
+          ),
+        ),
+      ),
     );
   }
 }
