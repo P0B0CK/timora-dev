@@ -61,8 +61,8 @@ class FeedbackPalette {
 }
 
 const defaultFeedback = FeedbackPalette(
-  success: Color(0xFF4CAF50), // vert
-  error: Color(0xFFF44336),   // rouge
-  warning: Color(0xFFFF9800), // orange
-  info: Color(0xFF2196F3),    // bleu
+  success: Color(0xA863FF6A), // vert
+  error: Color(0xDAFF4545),   // rouge
+  warning: Color(0xFFEAA54C), // orange
+  info: Color(0xFF60819A),    // bleu
 );

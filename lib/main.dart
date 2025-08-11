@@ -1,6 +1,7 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'theme/theme_manager.dart';
@@ -12,15 +13,46 @@ import 'env.dart';                       // AppConfig (dev/staging/prod)
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 1) Firebase
+  /// =========
+  ///  BACKEND
+  /// =========
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // 2) Config d'environnement (lit --dart-define=FLAVOR)
-  AppConfig.initializeFromDartDefine();
+  /// =================
+  ///  APP ORIENTATION
+  /// =================
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
 
-  // 3) Démarrage de l'app avec le ThemeManager
+  /// ====================
+  ///  MULTI ENVIRONMENT
+  /// ====================
+  const String flavor = String.fromEnvironment('FLAVOR');
+  late AppEnvironment environment;
+  print("FLAVOR = $flavor");
+
+  switch (flavor) {
+    case 'dev' :
+      environment = AppEnvironment.dev;
+      break;
+    case 'staging' :
+      environment = AppEnvironment.staging;
+      break;
+    case 'prod' :
+      environment = AppEnvironment.prod;
+      break;
+    default :
+      throw Exception("Unknow flavor : $flavor");
+  }
+
+  AppConfig.initialize(environment);
+
+  /// ===============
+  ///  APP LAUNCHER
+  /// ===============
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeManager(

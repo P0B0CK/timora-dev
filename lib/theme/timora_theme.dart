@@ -1,17 +1,17 @@
 // lib/theme/timora_theme.dart
 import 'package:flutter/material.dart';
-import 'colors_extension.dart';
-import 'themes.dart';
+import 'colors_extension.dart'; // barrel -> export 'app_colors_extension.dart'
+import 'themes.dart';           // barrel -> export 'theme_model.dart'
 import 'fonts.dart';
 
 class TimoraTheme {
   static ThemeData build(ThemeModel model, {AppColors? override}) {
     final appColors = override ?? AppColors.fromThemeModel(model);
 
+    // Ne plus passer `background:` -> utiliser `surface` uniquement
     final colorScheme = ColorScheme.fromSeed(
       seedColor: appColors.primary,
       brightness: model.isDark ? Brightness.dark : Brightness.light,
-      background: appColors.background,
       surface: appColors.surface,
     ).copyWith(
       primary: appColors.primary,
@@ -22,15 +22,19 @@ class TimoraTheme {
       onTertiary: appColors.onTertiary,
       error: appColors.error,
       onError: Colors.white,
+      // pas de background / onBackground -> privilégier surface / onSurface
+      surface: appColors.surface,
       onSurface: appColors.onSurface,
-      onBackground: appColors.onBackground,
     );
 
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
+      // couleur de page -> via token, pas via ColorScheme.background
       scaffoldBackgroundColor: appColors.background,
       extensions: [appColors],
+
+      // Typo
       textTheme: TextTheme(
         displayLarge: TimoraTextStyles.displayLarge.copyWith(color: appColors.onBackground),
         headlineMedium: TimoraTextStyles.headlineMedium.copyWith(color: appColors.onBackground),
@@ -38,11 +42,10 @@ class TimoraTheme {
         bodyLarge: TimoraTextStyles.bodyLarge.copyWith(color: appColors.onSurface),
         labelLarge: TimoraTextStyles.labelLarge.copyWith(color: appColors.onSurface),
       ),
-      dividerTheme: DividerThemeData(
-        color: appColors.divider,
-        thickness: 1,
-      ),
-      cardTheme: CardThemeData( // <-- CardThemeData (pas CardTheme)
+
+      dividerTheme: DividerThemeData(color: appColors.divider, thickness: 1),
+
+      cardTheme: CardThemeData(
         color: appColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -50,6 +53,8 @@ class TimoraTheme {
           borderRadius: BorderRadius.circular(16),
         ),
       ),
+
+      // Reste utile si tu utilises des TextField "classiques"
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: appColors.surface,
@@ -72,6 +77,7 @@ class TimoraTheme {
           borderSide: BorderSide(color: appColors.error, width: 2),
         ),
       ),
+
       chipTheme: ChipThemeData(
         backgroundColor: appColors.surface,
         selectedColor: appColors.primary.withOpacity(0.18),
@@ -81,50 +87,66 @@ class TimoraTheme {
         side: BorderSide(color: appColors.outline),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
+
+      // Buttons (WidgetStateProperty au lieu de MaterialStateProperty)
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.resolveWith((states) {
-            if (states.contains(MaterialState.disabled)) return appColors.disabled;
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) return appColors.disabled;
             return appColors.primary;
           }),
-          foregroundColor: MaterialStateProperty.all(appColors.onPrimary),
-          overlayColor: MaterialStateProperty.all(appColors.primary.withOpacity(0.08)),
-          shape: MaterialStateProperty.all(
+          foregroundColor: WidgetStateProperty.all(appColors.onPrimary),
+          overlayColor: WidgetStateProperty.all(appColors.primary.withOpacity(0.08)),
+          shape: WidgetStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           ),
-          padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 20, vertical: 14)),
+          padding: WidgetStateProperty.all(
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          ),
         ),
       ),
+
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: ButtonStyle(
-          side: MaterialStateProperty.resolveWith((states) {
+          side: WidgetStateProperty.resolveWith((states) {
             return BorderSide(
-              color: states.contains(MaterialState.disabled) ? appColors.disabled : appColors.outline,
+              color: states.contains(WidgetState.disabled)
+                  ? appColors.disabled
+                  : appColors.outline,
             );
           }),
-          foregroundColor: MaterialStateProperty.all(appColors.onSurface),
-          overlayColor: MaterialStateProperty.all(appColors.focus.withOpacity(0.12)),
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
-          padding: MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 20, vertical: 14)),
+          foregroundColor: WidgetStateProperty.all(appColors.onSurface),
+          overlayColor: WidgetStateProperty.all(appColors.focus.withOpacity(0.12)),
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          ),
+          padding: WidgetStateProperty.all(
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          ),
         ),
       ),
+
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
-          foregroundColor: MaterialStateProperty.all(appColors.primary),
-          overlayColor: MaterialStateProperty.all(appColors.primary.withOpacity(0.08)),
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+          foregroundColor: WidgetStateProperty.all(appColors.primary),
+          overlayColor: WidgetStateProperty.all(appColors.primary.withOpacity(0.08)),
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
         ),
       ),
+
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) return appColors.primary;
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return appColors.primary;
           return appColors.outline;
         }),
-        trackColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) return appColors.primary.withOpacity(0.35);
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return appColors.primary.withOpacity(0.35);
           return appColors.outline.withOpacity(0.25);
         }),
       ),
+
       snackBarTheme: SnackBarThemeData(
         backgroundColor: appColors.surface,
         contentTextStyle: TextStyle(color: appColors.onSurface),
