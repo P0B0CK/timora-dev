@@ -5,13 +5,12 @@ import 'package:provider/provider.dart';
 
 import 'package:timora/services/auth_service.dart';
 import 'package:timora/ui/organisms/auth_login.dart';
-import 'package:timora/ui/organisms/login_page.dart';     // ✅ routes
-import 'package:timora/ui/organisms/register_page.dart';  // ✅ routes
+import 'package:timora/ui/organisms/login_page.dart';
+import 'package:timora/ui/organisms/register_page.dart';
 import 'package:timora/ui/pages/home_page.dart';
 import 'package:timora/ui/templates/timora_scaffold.dart';
 import 'package:timora/ui/molecules/loader.dart';
 
-// ✅ Theme manager unifié
 import 'package:timora/theme/theme_manager.dart';
 
 class TimoraApp extends StatelessWidget {
@@ -46,7 +45,6 @@ class TimoraApp extends StatelessWidget {
               if (snapshot.hasData) {
                 return const TimoraScaffold(child: HomePage());
               }
-              // ⬇️ Page d’accueil auth (carré arrondi + logo + slogan + divider + CTA)
               return const AuthLoginPage();
             },
           ),

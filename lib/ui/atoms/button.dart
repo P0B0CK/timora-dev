@@ -109,7 +109,7 @@ class _AppButtonState extends State<AppButton> {
       duration: const Duration(milliseconds: 100),
       curve: Curves.easeOut,
       child: Opacity(
-        opacity: widget.isDisabled ? 0.6 : 1.0, // <- seulement si disabled
+        opacity: widget.isDisabled ? 0.6 : 1.0,
         child: container,
       ),
     );

@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 /// ===============================
 ///  ThemeExtension: TimoraTokens
 /// ===============================
-/// Les "rôles" de couleurs stables dans l'UI.
-/// Chaque rôle est rempli par une couleur de la palette selon
-/// le thème (dark/light).
+/// A SUPPRIMER :: OLD
 @immutable
 class TimoraTokens extends ThemeExtension<TimoraTokens> {
   final Color bg;

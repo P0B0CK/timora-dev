@@ -1,4 +1,5 @@
 // lib/atoms/buttons/primary_button.dart
+/// A SUPPRIMER :: OLD
 import 'package:flutter/material.dart';
 import '../../theme/colors_extension.dart';
 

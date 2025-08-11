@@ -25,7 +25,6 @@ class AppAlertMessage extends StatelessWidget {
     final tokens = theme.extension<AppColors>();
     final scheme = theme.colorScheme;
 
-    // Couleur d'accent selon type — priorité aux tokens (thème), fallback Feedback par défaut
     final Color accent = switch (type) {
       AlertType.error   => (tokens?.error   ?? defaultFeedback.error),
       AlertType.warning => (tokens?.warning ?? defaultFeedback.warning),
@@ -35,8 +34,6 @@ class AppAlertMessage extends StatelessWidget {
 
     final Color surface = tokens?.surface ?? scheme.surface;
     final Color textColor = tokens?.onSurface ?? scheme.onSurface;
-
-    // Légère teinte de la surface avec la couleur d’accent
     final Color bg = Color.alphaBlend(accent.withOpacity(0.12), surface.withOpacity(0.6));
 
     final content = Row(

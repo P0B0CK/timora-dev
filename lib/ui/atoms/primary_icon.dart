@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+/// A SUPPRIMER :: OLD
 class PrimaryIcon extends StatelessWidget {
   final IconData icon;
   final double size;

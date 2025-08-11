@@ -1,4 +1,3 @@
-// lib/ui/organisms/auth_login.dart
 import 'package:flutter/material.dart';
 import 'package:timora/ui/atoms/logo_full.dart';
 import 'package:timora/ui/atoms/button.dart';
@@ -18,7 +17,6 @@ class _AuthLoginPageState extends State<AuthLoginPage> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    // lance l’anim après le premier frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       setState(() {
@@ -32,7 +30,7 @@ class _AuthLoginPageState extends State<AuthLoginPage> with SingleTickerProvider
   Widget build(BuildContext context) {
     final theme  = Theme.of(context);
     final tokens = theme.extension<AppColors>();
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom; // clavier
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return Scaffold(
       body: SafeArea(
@@ -43,7 +41,7 @@ class _AuthLoginPageState extends State<AuthLoginPage> with SingleTickerProvider
             final cardWidth  = (shortest * 0.72).clamp(340.0, 520.0).toDouble();
             final cardHeight = (cardWidth * 1.35).clamp(440.0, 740.0).toDouble();
 
-            // Logo auto-dimensionné par rapport à la largeur
+            // Logo auto-dimensionné
             final logoHeight = (cardWidth * 0.15).clamp(52.0, 92.0).toDouble();
 
             // Spacings
@@ -53,6 +51,16 @@ class _AuthLoginPageState extends State<AuthLoginPage> with SingleTickerProvider
             const double gapAboveDivider  = 46;
             const double gapBelowDivider  = 46;
             const double gapBetweenButtons = 16;
+
+            // Ombre douce (différente en dark/light)
+            final BoxShadow softShadow = BoxShadow(
+              color: (theme.brightness == Brightness.dark)
+                  ? Colors.black.withOpacity(0.45)
+                  : Colors.black.withOpacity(0.08),
+              blurRadius: 30,
+              spreadRadius: 0,
+              offset: const Offset(0, 18),
+            );
 
             final card = Semantics(
               label: 'Écran d’authentification',
@@ -67,6 +75,7 @@ class _AuthLoginPageState extends State<AuthLoginPage> with SingleTickerProvider
                       color: tokens?.outline ?? theme.dividerColor,
                       width: 1.2,
                     ),
+                    boxShadow: [softShadow], // 👈 ombre
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: vPad, horizontal: hPad),
@@ -101,7 +110,6 @@ class _AuthLoginPageState extends State<AuthLoginPage> with SingleTickerProvider
 
                         const SizedBox(height: gapBelowDivider),
 
-                        // CTA Connexion
                         AppButton(
                           label: 'Se connecter',
                           type: ButtonType.primary,
@@ -110,7 +118,6 @@ class _AuthLoginPageState extends State<AuthLoginPage> with SingleTickerProvider
 
                         const SizedBox(height: gapBetweenButtons),
 
-                        // CTA Inscription
                         AppButton(
                           label: 'S’enregistrer',
                           type: ButtonType.outlined,
@@ -123,7 +130,7 @@ class _AuthLoginPageState extends State<AuthLoginPage> with SingleTickerProvider
               ),
             );
 
-            // Scroll-safe + centrage, avec padding bas quand le clavier est ouvert
+            // Scroll-safe + centrage + fade/scale
             return SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
               padding: EdgeInsets.only(bottom: bottomInset > 0 ? bottomInset + 16 : 24),
