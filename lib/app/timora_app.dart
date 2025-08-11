@@ -1,4 +1,4 @@
-// App Root
+// lib/app/timora_app.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
@@ -8,9 +8,10 @@ import 'package:timora/ui/organisms/login_page.dart';
 import 'package:timora/ui/organisms/register_page.dart';
 import 'package:timora/ui/pages/home_page.dart';
 import 'package:timora/ui/templates/timora_scaffold.dart';
+import 'package:timora/ui/molecules/loader.dart'; // ✅ loader full screen
 
-// ✅ utiliser le bon manager
-import 'package:timora/theme/theme_manager.dart'; // <- AU LIEU de themes.dart
+// ✅ Theme manager unifié
+import 'package:timora/theme/theme_manager.dart';
 
 class TimoraApp extends StatelessWidget {
   const TimoraApp({super.key});
@@ -22,7 +23,7 @@ class TimoraApp extends StatelessWidget {
         return MaterialApp(
           title: 'Timora',
           debugShowCheckedModeBanner: false,
-          theme: tm.themeData, // <- AU LIEU de tm.theme
+          theme: tm.themeData,
           routes: {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
@@ -32,8 +33,9 @@ class TimoraApp extends StatelessWidget {
             stream: AuthService().userStream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
+                return const AppLoader(
+                  logoHeight: 64,
+                  inkDropSize: 84,
                 );
               }
               if (snapshot.hasData) {
