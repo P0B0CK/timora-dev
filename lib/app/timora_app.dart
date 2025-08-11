@@ -4,11 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
 import 'package:timora/services/auth_service.dart';
-import 'package:timora/ui/organisms/login_page.dart';
-import 'package:timora/ui/organisms/register_page.dart';
+import 'package:timora/ui/organisms/auth_login.dart';
+import 'package:timora/ui/organisms/login_page.dart';     // ✅ routes
+import 'package:timora/ui/organisms/register_page.dart';  // ✅ routes
 import 'package:timora/ui/pages/home_page.dart';
 import 'package:timora/ui/templates/timora_scaffold.dart';
-import 'package:timora/ui/molecules/loader.dart'; // ✅ loader full screen
+import 'package:timora/ui/molecules/loader.dart';
 
 // ✅ Theme manager unifié
 import 'package:timora/theme/theme_manager.dart';
@@ -33,15 +34,20 @@ class TimoraApp extends StatelessWidget {
             stream: AuthService().userStream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
+                // ⬇️ Loader full-screen (valeurs par défaut ajustées dans la molécule)
                 return const AppLoader(
-                  logoHeight: 64,
-                  inkDropSize: 84,
+                  logoHeight: 72,
+                  inkDropSize: 38,
+                  gapBetweenLogoAndLoader: 48,
+                  loaderTopGap: 24,
+                  fullscreen: true,
                 );
               }
               if (snapshot.hasData) {
                 return const TimoraScaffold(child: HomePage());
               }
-              return const LoginPage();
+              // ⬇️ Page d’accueil auth (carré arrondi + logo + slogan + divider + CTA)
+              return const AuthLoginPage();
             },
           ),
         );

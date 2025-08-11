@@ -67,7 +67,7 @@ class TimoraIcon extends StatelessWidget {
     // Icône entourée (fond circulaire)
     return Container(
       width: size,
-      height: size,
+      // height: size,
       decoration: BoxDecoration(
         color: bgColor,
         shape: BoxShape.circle,
