@@ -79,25 +79,25 @@ TimoraTokens resolveTokens({
     final bg = palette.backgroundColor;
     return TimoraTokens(
       bg: bg,
-      primary: overrideAccent ?? palette.primaryColor,
+      primary: overrideAccent ?? palette.primaryColor, // 🌙 vert fluo
       secondary: palette.secondaryColor,
       tertiary: palette.tertiaryColor,
       textAuto: _autoOn(bg),
       textBrand: palette.textColor,
     );
   } else {
-    // Light = "frère" : ajustable selon ta DA
-    final bg = palette.tertiaryColor;            // ex: fond clair depuis tertiary
+    final bg = palette.tertiaryColor; // ex: fond clair
     return TimoraTokens(
       bg: bg,
-      primary: overrideAccent ?? palette.primaryColor,
-      secondary: palette.backgroundColor,        // swap utile pour contrastes
-      tertiary: palette.secondaryColor,
+      primary: overrideAccent ?? palette.secondaryColor, // ☀ violet myth
+      secondary: palette.backgroundColor,
+      tertiary: palette.primaryColor,
       textAuto: _autoOn(bg),
-      textBrand: _autoOn(bg),                     // ou palette.textColor si tu veux forcer la marque
+      textBrand: _autoOn(bg),
     );
   }
 }
+
 
 /// ===============================================
 ///  Factory ThemeData (Material 3)
