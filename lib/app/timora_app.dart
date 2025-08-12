@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 
 import 'package:timora/services/auth_service.dart';
 import 'package:timora/ui/organisms/auth_login.dart';
-import 'package:timora/ui/organisms/login_page.dart';
-import 'package:timora/ui/organisms/register_page.dart';
+import 'package:timora/ui/pages/login_page.dart';
+import 'package:timora/ui/pages/register_page.dart';
 import 'package:timora/ui/pages/home_page.dart';
 import 'package:timora/ui/templates/timora_scaffold.dart';
 import 'package:timora/ui/molecules/loader.dart';
