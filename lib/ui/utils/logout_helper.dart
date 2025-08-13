@@ -2,47 +2,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:timora/services/auth_service.dart';
+import 'package:timora/ui/molecules/app_modal.dart';
 
-Future<void> performLogout(BuildContext context) async {
-  // 👇 rootNavigator pour garantir la nav depuis la racine (même avec des Navigators imbriqués)
-  final nav = Navigator.of(context, rootNavigator: true);
-  final messenger = ScaffoldMessenger.of(context);
+/// Déconnecte l'utilisateur avec confirmation.
+/// [forceToLogin]: si true, on remplace la pile par '/login'.
+Future<void> performLogout(BuildContext context, {bool forceToLogin = false}) async {
+  debugPrint('[LogoutHelper] performLogout called (mounted=${context.mounted})');
 
-  final confirm = await showDialog<bool>(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      title: const Text('Se déconnecter ?'),
-      content: const Text('Vous allez être déconnecté de Timora. Continuer ?'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(false), // ✅ pop sur le navigator du dialog
-          child: const Text('Annuler'),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.of(ctx).pop(true), // ✅
-          child: const Text('Se déconnecter'),
-        ),
-      ],
-    ),
+  // ✅ Récupère le root navigator + son overlay (context garanti)
+  final rootNav = Navigator.of(context, rootNavigator: true);
+  final safeContext = rootNav.overlay?.context ?? context;
+
+  // ✅ Récupère un ScaffoldMessenger même si `context` n’en a pas
+  final messenger = ScaffoldMessenger.maybeOf(context)
+      ?? ScaffoldMessenger.maybeOf(safeContext)
+      ?? ScaffoldMessenger.of(safeContext);
+
+  debugPrint('[LogoutHelper] opening confirm modal…');
+  final confirm = await showAppConfirmDialog(
+    context: safeContext,             // 👈 context d’overlay root
+    title: 'Se déconnecter ?',
+    message: 'Vous allez être déconnecté de Timora. Continuer ?',
+    confirmLabel: 'Se déconnecter',
+    cancelLabel: 'Annuler',
+    useRootNavigator: true,           // 👈 route sur le root navigator
   );
 
+  debugPrint('[LogoutHelper] confirm result = $confirm');
   if (confirm != true) return;
 
   try {
     HapticFeedback.mediumImpact();
     debugPrint('[LogoutHelper] signOut…');
     await AuthService().signOut();
-    debugPrint('[LogoutHelper] signOut done, navigate to /login');
+    debugPrint('[LogoutHelper] signOut done');
 
-    // SnackBar d’info (facultatif)
     messenger.showSnackBar(
       const SnackBar(content: Text('Déconnecté. À bientôt 👋')),
     );
 
-    // 👉 Navigation forcée vers l’écran de login (même si on n’est pas sous le StreamBuilder)
-    Future.microtask(() {
-      nav.pushNamedAndRemoveUntil('/login', (route) => false);
-    });
+    if (forceToLogin) {
+      debugPrint('[LogoutHelper] forceToLogin -> /login');
+      Future.microtask(() {
+        rootNav.pushNamedAndRemoveUntil('/login', (route) => false);
+      });
+    }
   } catch (e) {
     messenger.showSnackBar(
       SnackBar(content: Text('Erreur de déconnexion : $e')),

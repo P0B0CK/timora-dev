@@ -5,8 +5,9 @@ import 'package:timora/ui/molecules/main_bottom_actions.dart';
 import 'package:timora/ui/molecules/left_column_actions.dart';
 import 'package:timora/ui/molecules/right_column_actions.dart';
 import 'package:timora/ui/atoms/icon.dart';
-// ✅ important
-import 'package:timora/services/auth_service.dart';
+import 'package:timora/ui/utils/logout_helper.dart';
+// ⬇️ importe la modale Paramètres
+import 'package:timora/ui/organisms/settings_modal.dart';
 
 class TimoraScaffold extends StatefulWidget {
   final Widget child;
@@ -18,7 +19,7 @@ class TimoraScaffold extends StatefulWidget {
 
   // gauche
   final VoidCallback? onOpenSettings;
-  final VoidCallback? onLogout;          // <- peut rester null
+  final VoidCallback? onLogout;         // si null => fallback modale
   final VoidCallback? onNotifications;
 
   // droite
@@ -56,32 +57,25 @@ class _TimoraScaffoldState extends State<TimoraScaffold> {
   void _toggleLeft()  => setState(() => _leftExpanded  = !_leftExpanded);
   void _toggleRight() => setState(() => _rightExpanded = !_rightExpanded);
 
-  Future<void> _performLogout(BuildContext context) async {
-    final nav = Navigator.of(context, rootNavigator: true); // ← rootNavigator
-    final msg = ScaffoldMessenger.of(context);
-    try {
-      debugPrint('[TimoraScaffold] default logout…');
-      await AuthService().logout();
-
-      if (!mounted) return;
-      msg.showSnackBar(const SnackBar(content: Text('Déconnecté. À bientôt 👋')));
-
-      // 🔧 Navigation après le frame courant (évite certains conflits de stack)
-      Future.microtask(() {
-        debugPrint('[TimoraScaffold] navigating to /login via rootNavigator');
-        nav.pushNamedAndRemoveUntil('/login', (route) => false);
-      });
-    } catch (e) {
-      if (!mounted) return;
-      debugPrint('[TimoraScaffold] logout error: $e');
-      msg.showSnackBar(SnackBar(content: Text('Déconnexion impossible : $e')));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context);
     final bottomGap = widget.bottomBarHeight + media.padding.bottom + 8;
+
+    // 🔎 Trace quel chemin va être pris
+    final hasCustomLogout = widget.onLogout != null;
+    debugPrint('[TimoraScaffold] build; hasCustomLogout=$hasCustomLogout');
+
+    // ✅ Wrap du callback pour LOG + garantir la modale en fallback
+    final VoidCallback _logoutTap = hasCustomLogout
+        ? () {
+      debugPrint('[TimoraScaffold] invoking CUSTOM onLogout');
+      widget.onLogout!.call();
+    }
+        : () {
+      debugPrint('[TimoraScaffold] fallback logout -> modal');
+      performLogout(context); // ouvre la modale
+    };
 
     return Scaffold(
       appBar: const PreferredSize(
@@ -92,7 +86,7 @@ class _TimoraScaffoldState extends State<TimoraScaffold> {
         children: [
           Positioned.fill(child: widget.child),
 
-          // TOOLBAR LEFT
+          // Colonne gauche + toggle
           Positioned(
             left: 12,
             bottom: bottomGap,
@@ -102,9 +96,9 @@ class _TimoraScaffoldState extends State<TimoraScaffold> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   LeftColumnActions(
-                    onOpenSettings: widget.onOpenSettings ?? () => debugPrint('open settings'),
-                    // ⬇️ utilise le callback fourni, sinon la déconnexion par défaut
-                    onLogout: widget.onLogout ?? () => _performLogout(context),
+                    // ⬇️ ouvre la modale Paramètres si aucun callback custom
+                    onOpenSettings: widget.onOpenSettings ?? () => openSettingsModal(context),
+                    onLogout: _logoutTap,
                     onNotifications: widget.onNotifications ?? () => debugPrint('open notifications'),
                     expanded: _leftExpanded,
                   ),
@@ -126,7 +120,7 @@ class _TimoraScaffoldState extends State<TimoraScaffold> {
             ),
           ),
 
-          // TOOLBAR RIGHT
+          // Colonne droite + toggle
           Positioned(
             right: 12,
             bottom: bottomGap,
@@ -139,7 +133,8 @@ class _TimoraScaffoldState extends State<TimoraScaffold> {
                     onCreateEvent: widget.onCreateEvent ?? () => debugPrint('create event'),
                     onCreateCalendar: widget.onCreateCalendar ?? () => debugPrint('create calendar'),
                     onManageGroups: widget.onManageGroups ?? () => debugPrint('manage groups'),
-                    onShare: widget.onShare,
+                    // ⬇️ évite de passer null si RightColumnActions attend un callback
+                    onShare: widget.onShare ?? () => debugPrint('share'),
                     expanded: _rightExpanded,
                   ),
                   const SizedBox(height: 10),
@@ -160,7 +155,7 @@ class _TimoraScaffoldState extends State<TimoraScaffold> {
             ),
           ),
 
-          // BOTTOM NAV
+          // Barre du bas (centre)
           Positioned(
             left: 0,
             right: 0,

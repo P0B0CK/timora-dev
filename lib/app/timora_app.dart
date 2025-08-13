@@ -10,13 +10,40 @@ import 'package:timora/ui/pages/register_page.dart';
 import 'package:timora/ui/pages/home_page.dart';
 import 'package:timora/ui/templates/timora_scaffold.dart';
 import 'package:timora/ui/molecules/loader.dart';
-
 import 'package:timora/theme/theme_manager.dart';
 
-import '../ui/utils/logout_helper.dart';
+// ✅ handlers
+import 'package:timora/ui/utils/logout_helper.dart';
+import 'package:timora/ui/organisms/settings_modal.dart';
 
 class TimoraApp extends StatelessWidget {
   const TimoraApp({super.key});
+
+  // Petite fabrique pour éviter de dupliquer la config de TimoraScaffold
+  Widget _buildHomeScaffold(BuildContext context) {
+    return TimoraScaffold(
+      // centre (garde ce que tu veux)
+      onPrev: () {},
+      onProfile: () {},
+      onNext: () {},
+
+      // GAUCHE —> branche les vrais handlers :
+      onOpenSettings: () => openSettingsModal(context), // <— OUVRE LA MODALE
+      onLogout: () => performLogout(context),           // <— OUVRE LA MODALE CONFIRM
+
+      // droite (exemples, garde/branche à ta guise)
+      onCreateCalendar: () {},
+      onCreateEvent: () {},
+      onManageGroups: () {},
+      onShare: () {},
+
+      child: HomePage(
+        onPrev: () => debugPrint('prev'),
+        onProfile: () => Navigator.pushNamed(context, '/profile'),
+        onNext: () => debugPrint('next'),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,24 +56,10 @@ class TimoraApp extends StatelessWidget {
           routes: {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
-            '/home': (context) => TimoraScaffold(
-              onPrev: () {  },
-              onProfile: () {  },
-              onNext: () {  },
-              onOpenSettings: () {  },
-              onNotifications: () {  },
-              onLogout: () => performLogout(context),
-              onCreateCalendar: () {  },
-              onCreateEvent: () {  },
-              onManageGroups: () {  },
-              onShare: () {  },
-              child: HomePage(
-                onPrev: () => debugPrint('prev'),
-                onProfile: () =>
-                    Navigator.pushNamed(context, '/profile'), // exemple
-                onNext: () => debugPrint('next'),
-              ),
-            ),
+
+            // ✅ la route /home utilise la même config câblée
+            '/home': (context) => _buildHomeScaffold(context),
+
             '/profile': (context) => const Placeholder(), // à remplacer
           },
           home: StreamBuilder<User?>(
@@ -62,24 +75,8 @@ class TimoraApp extends StatelessWidget {
                 );
               }
               if (snapshot.hasData) {
-                return TimoraScaffold(
-                  onPrev: () {  },
-                  onProfile: () {  },
-                  onNext: () {  },
-                  onOpenSettings: () {  },
-                  onNotifications: () {  },
-                  onLogout: () {  },
-                  onCreateCalendar: () {  },
-                  onCreateEvent: () {  },
-                  onManageGroups: () {  },
-                  onShare: () {  },
-                  child: HomePage(
-                    onPrev: () => debugPrint('prev'),
-                    onProfile: () =>
-                        Navigator.pushNamed(context, '/profile'),
-                    onNext: () => debugPrint('next'),
-                  ),
-                );
+                // ✅ même config ici (pas de callbacks vides !)
+                return _buildHomeScaffold(context);
               }
               return const AuthLoginPage();
             },

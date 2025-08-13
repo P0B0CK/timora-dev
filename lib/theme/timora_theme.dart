@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'colors_extension.dart'; // barrel -> export 'app_colors_extension.dart'
 import 'themes.dart';           // barrel -> export 'theme_model.dart'
 import 'fonts.dart';
+import 'fonts_extension.dart';
 
 class TimoraTheme {
   static ThemeData build(ThemeModel model, {AppColors? override}) {
     final appColors = override ?? AppColors.fromThemeModel(model);
 
-    // Ne plus passer `background:` -> utiliser `surface` uniquement
+    // ColorScheme M3 (on privilégie surface/onSurface)
     final colorScheme = ColorScheme.fromSeed(
       seedColor: appColors.primary,
       brightness: model.isDark ? Brightness.dark : Brightness.light,
@@ -22,26 +23,44 @@ class TimoraTheme {
       onTertiary: appColors.onTertiary,
       error: appColors.error,
       onError: Colors.white,
-      // pas de background / onBackground -> privilégier surface / onSurface
       surface: appColors.surface,
+      onSurface: appColors.onSurface,
+      // background/onBackground non forcés : on utilise scaffoldBackgroundColor + textTheme.apply
+    );
+
+    // TextTheme basé sur tes GoogleFonts, colorisé en neutre (onSurface)
+    final textTheme = TextTheme(
+      displayLarge: TimoraTextStyles.displayLarge,
+      headlineMedium: TimoraTextStyles.headlineMedium,
+      titleMedium: TimoraTextStyles.titleMedium,
+      bodyLarge: TimoraTextStyles.bodyLarge,
+      labelLarge: TimoraTextStyles.labelLarge,
+    ).apply(
+      bodyColor: appColors.onSurface,
+      displayColor: appColors.onSurface,
+    );
+
+    // Styles sémantiques brandés (primary) exposés via ThemeExtension
+    final extraFonts = TimoraExtraTextStyles.fromColors(
+      primary: appColors.primary,
       onSurface: appColors.onSurface,
     );
 
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      // couleur de page -> via token, pas via ColorScheme.background
-      scaffoldBackgroundColor: appColors.background,
-      extensions: [appColors],
 
-      // Typo
-      textTheme: TextTheme(
-        displayLarge: TimoraTextStyles.displayLarge.copyWith(color: appColors.onBackground),
-        headlineMedium: TimoraTextStyles.headlineMedium.copyWith(color: appColors.onBackground),
-        titleMedium: TimoraTextStyles.titleMedium.copyWith(color: appColors.onSurface),
-        bodyLarge: TimoraTextStyles.bodyLarge.copyWith(color: appColors.onSurface),
-        labelLarge: TimoraTextStyles.labelLarge.copyWith(color: appColors.onSurface),
-      ),
+      // Fond global des pages
+      scaffoldBackgroundColor: appColors.background,
+
+      // Extensions disponibles partout (couleurs + fontes “brand”)
+      extensions: [
+        appColors,
+        extraFonts,
+      ],
+
+      // Typo unique (supprime la duplication précédente)
+      textTheme: textTheme,
 
       dividerTheme: DividerThemeData(color: appColors.divider, thickness: 1),
 
@@ -54,7 +73,6 @@ class TimoraTheme {
         ),
       ),
 
-      // Reste utile si tu utilises des TextField "classiques"
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: appColors.surface,
@@ -88,7 +106,7 @@ class TimoraTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
 
-      // Buttons (WidgetStateProperty au lieu de MaterialStateProperty)
+      // Boutons — garde ton usage de WidgetStateProperty si ton SDK le supporte
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.resolveWith((states) {
