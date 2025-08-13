@@ -1,3 +1,4 @@
+// lib/ui/organisms/auth_login.dart
 import 'package:flutter/material.dart';
 import 'package:timora/ui/atoms/logo_full.dart';
 import 'package:timora/ui/atoms/button.dart';

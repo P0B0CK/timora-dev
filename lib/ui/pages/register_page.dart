@@ -125,11 +125,23 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     try {
-      await AuthService().register(email: _emailC.text.trim(), password: _passC.text);
+      await AuthService().register(
+        email: _emailC.text.trim(),
+        password: _passC.text,
+      );
 
       if (!mounted) return;
-      // 👉 redirige vers Home et nettoie la stack
-      Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+
+      // Feedback (optionnel)
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Compte créé ✔')),
+      );
+
+      // ✅ Redirection fiable : on remplace toute la pile par /home
+      final nav = Navigator.of(context, rootNavigator: true);
+      Future.microtask(() {
+        nav.pushNamedAndRemoveUntil('/home', (route) => false);
+      });
     } on FirebaseAuthException catch (e) {
       setState(() {
         _globalMsg = e.message ?? 'Inscription impossible.';

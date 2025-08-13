@@ -4,7 +4,7 @@ import 'package:timora/ui/molecules/loader.dart';
 import 'package:timora/services/auth_service.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required void Function() onPrev, required Future<Object?> Function() onProfile, required void Function() onNext});
 
   Future<void> _logout(BuildContext context) async {
     try {
@@ -23,17 +23,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Timora Theme Demo', style: Theme.of(context).textTheme.titleMedium),
-        actions: [
-          const ThemeToggleButton(),
-          IconButton(
-            tooltip: 'Se déconnecter',
-            icon: const Icon(Icons.logout_rounded),
-            onPressed: () => _logout(context),
-          ),
-        ],
-      ),
       // Démo: loader non-fullscreen
       body: const Padding(
         padding: EdgeInsets.all(50),

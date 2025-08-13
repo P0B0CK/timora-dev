@@ -1,42 +1,71 @@
+// lib/ui/molecules/main_bottom_actions.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // ← nécessaire pour afficher les SVG
-import '../atoms/timora_icon.dart';
+import '../atoms/icon.dart';
 
 class MainBottomActions extends StatelessWidget {
-  const MainBottomActions({super.key});
+  final VoidCallback? onPrev;
+  final VoidCallback? onProfile;
+  final VoidCallback? onNext;
+
+  // Toggle central optionnel
+  final bool isExpanded;
+  final VoidCallback? onToggle;
+
+  const MainBottomActions({
+    super.key,
+    this.onPrev,
+    this.onProfile,
+    this.onNext,
+    this.isExpanded = false,
+    this.onToggle, // si null => pas d’icône more_vert au centre
+  });
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).colorScheme.primary;
+    final row = <Widget>[
+      AppIcon(
+        assetName: 'assets/icons/arrow_left.svg',
+        style: AppIconStyle.alone,
+        size: 42,
+        tooltip: 'Précédent',
+        onPressed: onPrev,
+      ),
+      const SizedBox(width: 16),
+      AppIcon(
+        assetName: 'assets/icons/account_profile.svg',
+        style: AppIconStyle.alone,
+        size: 52,
+        tooltip: 'Profil',
+        onPressed: onProfile,
+      ),
+      const SizedBox(width: 16),
+      AppIcon(
+        assetName: 'assets/icons/arrow_right.svg',
+        style: AppIconStyle.alone,
+        size: 42,
+        tooltip: 'Suivant',
+        onPressed: onNext,
+      ),
+    ];
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          icon: const TimoraIcon(iconPath: 'assets/icons/arrow_left.svg'),
-          iconSize: 42,
-          color: primaryColor,
-          onPressed: () {},
-        ),
-        const SizedBox(width: 16),
-        IconButton(
-          icon: const TimoraIcon(
-            iconPath: 'assets/icons/account_profile.svg',
+    if (onToggle != null) {
+      row.addAll([
+        const SizedBox(width: 18),
+        AnimatedRotation(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          turns: isExpanded ? 0.25 : 0,
+          child: AppIcon(
+            assetName: 'assets/icons/more_vert.svg',
+            style: AppIconStyle.alone,
+            size: 36,
+            tooltip: isExpanded ? 'Rétracter' : 'Déployer',
+            onPressed: onToggle,
           ),
-          iconSize: 42,
-          color: primaryColor,
-          onPressed: () {
-            // Action à définir
-          },
         ),
-        const SizedBox(width: 16),
-        IconButton(
-          icon: const TimoraIcon(iconPath: 'assets/icons/arrow_right.svg'),
-          iconSize: 42,
-          color: primaryColor,
-          onPressed: () {},
-        ),
-      ],
-    );
+      ]);
+    }
+
+    return Row(mainAxisSize: MainAxisSize.min, children: row);
   }
 }

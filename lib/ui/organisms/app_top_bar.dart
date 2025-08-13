@@ -1,6 +1,8 @@
+// lib/ui/organisms/app_top_bar.dart
 import 'package:flutter/material.dart';
 import '../atoms/logo_full.dart';
 import '../../env.dart';
+import 'package:timora/theme/colors_extension.dart'; // si tu utilises AppColors
 
 class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   const AppTopBar({super.key});
@@ -10,18 +12,36 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final env = AppConfig.instance.env;
+    final theme  = Theme.of(context);
+    final tokens = theme.extension<AppColors>();
+    final env    = AppConfig.instance.env;
+
+    // Fond/texte de l’app bar (alignés sur ton thème)
+    final Color bg = tokens?.background ?? theme.colorScheme.background;
+    final Color fg = tokens?.onBackground ?? theme.colorScheme.onBackground;
 
     // Couleurs du badge env
     final Color badgeBg = switch (env) {
-      AppEnvironment.dev => const Color(0xFF2E7D32),    // green 800
-      AppEnvironment.staging => const Color(0xFFEF6C00),// orange 800
-      AppEnvironment.prod => Colors.transparent,
+      AppEnvironment.dev     => const Color(0xFF2E7D32), // green 800
+      AppEnvironment.staging => const Color(0xFFEF6C00), // orange 800
+      AppEnvironment.prod    => Colors.transparent,
     };
     final Color badgeFg = _autoOn(badgeBg);
 
     return AppBar(
       titleSpacing: 0,
+      backgroundColor: bg,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      shadowColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      foregroundColor: fg,
+      iconTheme: IconThemeData(color: fg),
+      titleTextStyle: theme.textTheme.titleLarge?.copyWith(color: fg),
+
+      // (optionnel) pas d’icône back auto si tu gères la nav autrement
+      // automaticallyImplyLeading: false,
+
       title: const Padding(
         padding: EdgeInsets.only(left: 12),
         child: LogoFull(height: 34),
@@ -33,10 +53,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
             child: Chip(
               label: Text(
                 env == AppEnvironment.dev ? 'DEV' : 'STAGING',
-                style: Theme.of(context)
-                    .textTheme
-                    .labelLarge
-                    ?.copyWith(color: badgeFg),
+                style: theme.textTheme.labelLarge?.copyWith(color: badgeFg),
               ),
               backgroundColor: badgeBg,
               side: BorderSide.none,

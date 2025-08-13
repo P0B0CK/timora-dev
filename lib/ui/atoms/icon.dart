@@ -1,3 +1,4 @@
+// icon.dart
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,17 +8,34 @@ import 'package:timora/theme/colors_extension.dart';
 enum AppIconStyle { alone, rounded }
 
 class AppIcon extends StatefulWidget {
+  /// Icône Flutter standard
   final IconData? icon;
+
+  /// Icône SVG depuis les assets
   final String? assetName;
 
+  /// Style visuel (icône seule ou pastille arrondie)
   final AppIconStyle style;
-  final double size;                 // taille de l’icône (px)
-  final EdgeInsets padding;          // padding de la pastille (rounded)
+
+  /// Taille de l’icône (en px)
+  final double size;
+
+  /// Padding interne de la pastille (pour le style arrondi)
+  final EdgeInsets padding;
+
+  /// Infobulle affichée au survol/long press
   final String? tooltip;
+
+  /// Callback au clic
   final VoidCallback? onPressed;
+
+  /// Icône désactivée (opacité réduite, sans clic)
   final bool isDisabled;
 
+  /// Animation de "push down" au clic
   final bool pushDown;
+
+  /// Facteur d’échelle lors du "push down"
   final double pressedScale;
 
   const AppIcon({
@@ -25,7 +43,7 @@ class AppIcon extends StatefulWidget {
     this.icon,
     this.assetName,
     this.style = AppIconStyle.alone,
-    this.size = 34,
+    this.size = 24,
     this.padding = const EdgeInsets.all(6),
     this.tooltip,
     this.onPressed,
@@ -45,7 +63,7 @@ class _AppIconState extends State<AppIcon> {
   double _scale = 1.0;
 
   void _onDown(TapDownDetails _) {
-    if (!widget.pushDown || widget.isDisabled) return; // anime même sans onPressed
+    if (!widget.pushDown || widget.isDisabled) return;
     setState(() => _scale = widget.pressedScale);
   }
 
@@ -61,15 +79,17 @@ class _AppIconState extends State<AppIcon> {
 
   @override
   Widget build(BuildContext context) {
-    final theme  = Theme.of(context);
+    final theme = Theme.of(context);
     final tokens = theme.extension<AppColors>();
     final scheme = theme.colorScheme;
 
-    final primary    = tokens?.primary ?? scheme.primary;
+    final primary = tokens?.primary ?? scheme.primary;
     final background = tokens?.background ?? scheme.background;
 
-    final Color bgColor   = widget.style == AppIconStyle.rounded ? primary    : Colors.transparent;
-    final Color iconColor = widget.style == AppIconStyle.rounded ? background : primary;
+    final Color bgColor =
+    widget.style == AppIconStyle.rounded ? primary : Colors.transparent;
+    final Color iconColor =
+    widget.style == AppIconStyle.rounded ? background : primary;
 
     final Widget iconWidget = widget.assetName != null
         ? SvgPicture.asset(
@@ -86,7 +106,7 @@ class _AppIconState extends State<AppIcon> {
       final double w = widget.size + resolved.horizontal;
       final double h = widget.size + resolved.vertical;
       final double dimRaw = w > h ? w : h;
-      final double dim = math.max(48.0, dimRaw); // cible tactile min 48px
+      final double dim = math.max(48.0, dimRaw); // taille tactile min
 
       content = Container(
         width: dim,
@@ -113,7 +133,7 @@ class _AppIconState extends State<AppIcon> {
     );
 
     final wrapped = GestureDetector(
-      onTapDown: _onDown,   // push-down même sans onPressed
+      onTapDown: _onDown,
       onTapUp: _onUp,
       onTapCancel: _onCancel,
       onTap: widget.onPressed == null

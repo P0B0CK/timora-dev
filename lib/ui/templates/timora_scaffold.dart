@@ -1,23 +1,183 @@
-// Interface
-
+// lib/ui/templates/timora_scaffold.dart
 import 'package:flutter/material.dart';
-import '../organisms/app_top_bar.dart';
-import '../organisms/app_bottom_bar.dart';
+import 'package:timora/ui/organisms/app_top_bar.dart';
+import 'package:timora/ui/molecules/main_bottom_actions.dart';
+import 'package:timora/ui/molecules/left_column_actions.dart';
+import 'package:timora/ui/molecules/right_column_actions.dart';
+import 'package:timora/ui/atoms/icon.dart';
+// ✅ important
+import 'package:timora/services/auth_service.dart';
 
-class TimoraScaffold extends StatelessWidget {
+class TimoraScaffold extends StatefulWidget {
   final Widget child;
 
-  const TimoraScaffold({super.key, required this.child});
+  // centre
+  final VoidCallback? onPrev;
+  final VoidCallback? onProfile;
+  final VoidCallback? onNext;
+
+  // gauche
+  final VoidCallback? onOpenSettings;
+  final VoidCallback? onLogout;          // <- peut rester null
+  final VoidCallback? onNotifications;
+
+  // droite
+  final VoidCallback? onCreateEvent;
+  final VoidCallback? onCreateCalendar;
+  final VoidCallback? onManageGroups;
+  final VoidCallback? onShare;
+
+  final double bottomBarHeight;
+
+  const TimoraScaffold({
+    super.key,
+    required this.child,
+    this.onPrev,
+    this.onProfile,
+    this.onNext,
+    this.onOpenSettings,
+    this.onLogout,
+    this.onNotifications,
+    this.onCreateEvent,
+    this.onCreateCalendar,
+    this.onManageGroups,
+    this.onShare,
+    this.bottomBarHeight = 56,
+  });
+
+  @override
+  State<TimoraScaffold> createState() => _TimoraScaffoldState();
+}
+
+class _TimoraScaffoldState extends State<TimoraScaffold> {
+  bool _leftExpanded = true;
+  bool _rightExpanded = true;
+
+  void _toggleLeft()  => setState(() => _leftExpanded  = !_leftExpanded);
+  void _toggleRight() => setState(() => _rightExpanded = !_rightExpanded);
+
+  Future<void> _performLogout(BuildContext context) async {
+    final nav = Navigator.of(context, rootNavigator: true); // ← rootNavigator
+    final msg = ScaffoldMessenger.of(context);
+    try {
+      debugPrint('[TimoraScaffold] default logout…');
+      await AuthService().logout();
+
+      if (!mounted) return;
+      msg.showSnackBar(const SnackBar(content: Text('Déconnecté. À bientôt 👋')));
+
+      // 🔧 Navigation après le frame courant (évite certains conflits de stack)
+      Future.microtask(() {
+        debugPrint('[TimoraScaffold] navigating to /login via rootNavigator');
+        nav.pushNamedAndRemoveUntil('/login', (route) => false);
+      });
+    } catch (e) {
+      if (!mounted) return;
+      debugPrint('[TimoraScaffold] logout error: $e');
+      msg.showSnackBar(SnackBar(content: Text('Déconnexion impossible : $e')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+    final bottomGap = widget.bottomBarHeight + media.padding.bottom + 8;
+
     return Scaffold(
       appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(60),
+        preferredSize: Size.fromHeight(kToolbarHeight),
         child: AppTopBar(),
       ),
-      body: child,
-      bottomNavigationBar: const AppBottomBar(),
+      body: Stack(
+        children: [
+          Positioned.fill(child: widget.child),
+
+          // TOOLBAR LEFT
+          Positioned(
+            left: 12,
+            bottom: bottomGap,
+            child: SafeArea(
+              top: false, bottom: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LeftColumnActions(
+                    onOpenSettings: widget.onOpenSettings ?? () => debugPrint('open settings'),
+                    // ⬇️ utilise le callback fourni, sinon la déconnexion par défaut
+                    onLogout: widget.onLogout ?? () => _performLogout(context),
+                    onNotifications: widget.onNotifications ?? () => debugPrint('open notifications'),
+                    expanded: _leftExpanded,
+                  ),
+                  const SizedBox(height: 10),
+                  AnimatedRotation(
+                    duration: const Duration(milliseconds: 220),
+                    curve: Curves.easeOutCubic,
+                    turns: _leftExpanded ? 0.25 : 0,
+                    child: AppIcon(
+                      assetName: 'assets/icons/more_vert.svg',
+                      style: AppIconStyle.alone,
+                      size: 28,
+                      tooltip: _leftExpanded ? 'Rétracter la colonne gauche' : 'Déployer la colonne gauche',
+                      onPressed: _toggleLeft,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // TOOLBAR RIGHT
+          Positioned(
+            right: 12,
+            bottom: bottomGap,
+            child: SafeArea(
+              top: false, bottom: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RightColumnActions(
+                    onCreateEvent: widget.onCreateEvent ?? () => debugPrint('create event'),
+                    onCreateCalendar: widget.onCreateCalendar ?? () => debugPrint('create calendar'),
+                    onManageGroups: widget.onManageGroups ?? () => debugPrint('manage groups'),
+                    onShare: widget.onShare,
+                    expanded: _rightExpanded,
+                  ),
+                  const SizedBox(height: 10),
+                  AnimatedRotation(
+                    duration: const Duration(milliseconds: 220),
+                    curve: Curves.easeOutCubic,
+                    turns: _rightExpanded ? 0.25 : 0,
+                    child: AppIcon(
+                      assetName: 'assets/icons/more_vert.svg',
+                      style: AppIconStyle.alone,
+                      size: 28,
+                      tooltip: _rightExpanded ? 'Rétracter la colonne droite' : 'Déployer la colonne droite',
+                      onPressed: _toggleRight,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // BOTTOM NAV
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: media.padding.bottom + 8,
+            child: Center(
+              child: SizedBox(
+                height: widget.bottomBarHeight,
+                child: MainBottomActions(
+                  onPrev: widget.onPrev,
+                  onProfile: widget.onProfile,
+                  onNext: widget.onNext,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -13,6 +13,8 @@ import 'package:timora/ui/molecules/loader.dart';
 
 import 'package:timora/theme/theme_manager.dart';
 
+import '../ui/utils/logout_helper.dart';
+
 class TimoraApp extends StatelessWidget {
   const TimoraApp({super.key});
 
@@ -27,13 +29,30 @@ class TimoraApp extends StatelessWidget {
           routes: {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
-            '/home': (context) => const TimoraScaffold(child: HomePage()),
+            '/home': (context) => TimoraScaffold(
+              onPrev: () {  },
+              onProfile: () {  },
+              onNext: () {  },
+              onOpenSettings: () {  },
+              onNotifications: () {  },
+              onLogout: () => performLogout(context),
+              onCreateCalendar: () {  },
+              onCreateEvent: () {  },
+              onManageGroups: () {  },
+              onShare: () {  },
+              child: HomePage(
+                onPrev: () => debugPrint('prev'),
+                onProfile: () =>
+                    Navigator.pushNamed(context, '/profile'), // exemple
+                onNext: () => debugPrint('next'),
+              ),
+            ),
+            '/profile': (context) => const Placeholder(), // à remplacer
           },
           home: StreamBuilder<User?>(
             stream: AuthService().userStream,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                // ⬇️ Loader full-screen (valeurs par défaut ajustées dans la molécule)
                 return const AppLoader(
                   logoHeight: 72,
                   inkDropSize: 38,
@@ -43,7 +62,24 @@ class TimoraApp extends StatelessWidget {
                 );
               }
               if (snapshot.hasData) {
-                return const TimoraScaffold(child: HomePage());
+                return TimoraScaffold(
+                  onPrev: () {  },
+                  onProfile: () {  },
+                  onNext: () {  },
+                  onOpenSettings: () {  },
+                  onNotifications: () {  },
+                  onLogout: () {  },
+                  onCreateCalendar: () {  },
+                  onCreateEvent: () {  },
+                  onManageGroups: () {  },
+                  onShare: () {  },
+                  child: HomePage(
+                    onPrev: () => debugPrint('prev'),
+                    onProfile: () =>
+                        Navigator.pushNamed(context, '/profile'),
+                    onNext: () => debugPrint('next'),
+                  ),
+                );
               }
               return const AuthLoginPage();
             },
