@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'theme/theme_manager.dart';
 import 'theme/themes.dart';
 import 'app/timora_app.dart';
@@ -14,6 +15,9 @@ import 'services/user_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // DATES SETTINGS
+  await initializeDateFormatting('fr');
 
   // BACKEND
   await Firebase.initializeApp(

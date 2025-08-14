@@ -1,5 +1,6 @@
 // lib/app/timora_app.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
@@ -21,21 +22,20 @@ class TimoraApp extends StatelessWidget {
 
   Widget _buildHomeScaffold(BuildContext context) {
     return TimoraScaffold(
-      //onPrev: () {},
-      //onNext: () {},
+      // callbacks de la barre du bas (centre)
+      onPrev: () => debugPrint('prev'),
+      onProfile: () => Navigator.pushNamed(context, '/profile'),
+      onNext: () => debugPrint('next'),
+
+      // colonne gauche
       onOpenSettings: () => openSettingsModal(context),
       onLogout: () => performLogout(context),
-      //onCreateCalendar: () {},
-      //onCreateEvent: () {},
-      //onManageGroups: () {},
-      //onShare: () {},
-      child: HomePage(
-        onPrev: () => debugPrint('prev'),
-        onProfile: () => Navigator.pushNamed(context, '/profile'),
-        onNext: () => debugPrint('next'),
-      ),
+
+      // contenu
+      child: const HomePage(),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +45,25 @@ class TimoraApp extends StatelessWidget {
           title: 'Timora',
           debugShowCheckedModeBanner: false,
           theme: tm.themeData,
+
+          locale: const Locale('fr'),
+          supportedLocales: [
+            Locale('fr'),
+            Locale('en'),
+          ],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+
           routes: {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
             '/home': (context) => _buildHomeScaffold(context),
             '/profile': (context) => const ProfileModalRoute(),
           },
+
           home: StreamBuilder<User?>(
             stream: AuthService().userStream,
             builder: (context, snapshot) {
