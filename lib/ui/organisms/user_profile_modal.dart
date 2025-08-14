@@ -1,4 +1,3 @@
-// lib/ui/organisms/user_profile_modal.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

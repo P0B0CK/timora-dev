@@ -60,22 +60,25 @@ class _ReauthDeleteModalState extends State<ReauthDeleteModal> {
     final uid = user.uid;
 
     try {
-      // 1) Réauthentifier
+      // 1) Réauth
       await auth.reauthenticate(_emailCtrl.text.trim(), _pwdCtrl.text);
 
-      // 2) Supprimer le compte
-      await user.delete();
+      // 2) 🔴 Supprimer le doc Firestore AVANT user.delete()
+      try {
+        await repo.deleteProfileDoc(uid);
+      } catch (_) {
+        // ignore si déjà supprimé
+      }
 
-      // 3) Supprimer le doc Firestore
-      await repo.deleteProfileDoc(uid);
+      // 3) Supprimer le compte Auth
+      await user.delete();
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Compte supprimé. Au revoir 👋')),
       );
 
-      // 4) Fermer la modale et revenir à l’écran d’arrivée
-      Navigator.of(context).pop(); // ferme ReauthDeleteModal
+      // 4) Retour à l’écran d’arrivée
       await _navigateToLanding();
     } on FirebaseAuthException catch (e) {
       String msg = 'Erreur : ${e.code}';
@@ -115,7 +118,7 @@ class _ReauthDeleteModalState extends State<ReauthDeleteModal> {
             hint: '',
             controller: _emailCtrl,
             keyboardType: TextInputType.emailAddress,
-            enabled: true, // mets false si tu veux empêcher l’édition
+            enabled: true, // mets false si tu veux le verrouiller
           ),
           const SizedBox(height: 12),
 
@@ -128,17 +131,19 @@ class _ReauthDeleteModalState extends State<ReauthDeleteModal> {
 
           const SizedBox(height: 20),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+          // Boutons : Wrap pour éviter les overflows
+          Wrap(
+            alignment: WrapAlignment.end,
+            spacing: 12,
+            runSpacing: 12,
             children: [
               AppButton(
                 label: 'Annuler',
                 type: ButtonType.outlined,
                 onPressed: _working ? (){} : () => Navigator.of(context).pop(),
               ),
-              const SizedBox(width: 12),
               AppButton(
-                label: 'Valider',
+                label: 'Valider et supprimer',
                 onPressed: _working ? (){} : _reauthAndDelete,
                 type: ButtonType.primary,
                 isLoading: _working,
