@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import '../atoms/logo_full.dart';
 import '../../env.dart';
-import 'package:timora/theme/colors_extension.dart'; // si tu utilises AppColors
+import 'package:timora/theme/colors_extension.dart';
 
 class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
   const AppTopBar({super.key});
@@ -15,15 +15,13 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
     final theme  = Theme.of(context);
     final tokens = theme.extension<AppColors>();
     final env    = AppConfig.instance.env;
-
-    // Fond/texte de l’app bar (alignés sur ton thème)
     final Color bg = tokens?.background ?? theme.colorScheme.background;
     final Color fg = tokens?.onBackground ?? theme.colorScheme.onBackground;
 
-    // Couleurs du badge env
+    // BADGES ENVIRONMENTS
     final Color badgeBg = switch (env) {
-      AppEnvironment.dev     => const Color(0xFF2E7D32), // green 800
-      AppEnvironment.staging => const Color(0xFFEF6C00), // orange 800
+      AppEnvironment.dev     => const Color(0xFF79BD7D),
+      AppEnvironment.staging => const Color(0xFFDC944B),
       AppEnvironment.prod    => Colors.transparent,
     };
     final Color badgeFg = _autoOn(badgeBg);
@@ -38,10 +36,6 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
       foregroundColor: fg,
       iconTheme: IconThemeData(color: fg),
       titleTextStyle: theme.textTheme.titleLarge?.copyWith(color: fg),
-
-      // (optionnel) pas d’icône back auto si tu gères la nav autrement
-      // automaticallyImplyLeading: false,
-
       title: const Padding(
         padding: EdgeInsets.only(left: 12),
         child: LogoFull(height: 34),

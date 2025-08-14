@@ -39,7 +39,7 @@ class UserRepository {
     });
   }
 
-  /// Suppression du document profil (appelé après suppression compte Auth)
+  /// Suppression du document profil => après suppression compte Auth
   Future<void> deleteProfileDoc(String uid) {
     return _db.collection('users').doc(uid).delete();
   }

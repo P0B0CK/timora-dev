@@ -1,6 +1,7 @@
 // lib/ui/organisms/settings_modal.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:timora/ui/atoms/button.dart';
 import 'package:timora/ui/molecules/app_modal.dart';
 import 'package:timora/theme/colors_extension.dart';
@@ -221,7 +222,7 @@ class _AboutPanel extends StatelessWidget {
     final tokens  = theme.extension<AppColors>();
     final env     = AppConfig.instance.env;
     const appName = 'Timora';
-    const version = '0.1.0'; // à brancher plus tard avec package_info_plus
+    const version = '0.1.0';
 
     return Column(
       children: [

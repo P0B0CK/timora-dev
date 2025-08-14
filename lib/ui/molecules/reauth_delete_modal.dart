@@ -1,3 +1,4 @@
+// lib/ui/molecules/reauth_delete_modal.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -118,7 +119,7 @@ class _ReauthDeleteModalState extends State<ReauthDeleteModal> {
             hint: '',
             controller: _emailCtrl,
             keyboardType: TextInputType.emailAddress,
-            enabled: true, // mets false si tu veux le verrouiller
+            enabled: true, // false = lock
           ),
           const SizedBox(height: 12),
 
@@ -131,7 +132,6 @@ class _ReauthDeleteModalState extends State<ReauthDeleteModal> {
 
           const SizedBox(height: 20),
 
-          // Boutons : Wrap pour éviter les overflows
           Wrap(
             alignment: WrapAlignment.end,
             spacing: 12,

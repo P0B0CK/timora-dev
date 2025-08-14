@@ -1,10 +1,10 @@
+// lib/ui/organisms/user_profile_modal.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../services/auth_service.dart';
 import '../../services/user_repository.dart';
 
-// Atoms / tokens
 import 'package:timora/ui/atoms/button.dart';
 import 'package:timora/ui/atoms/input_field.dart';
 import 'package:timora/theme/colors_extension.dart';
@@ -143,7 +143,6 @@ class _UserProfileModalState extends State<UserProfileModal> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Pseudo
                     CustomInputField(
                       label: 'Votre pseudo',
                       hint: 'Votre nom visible',
@@ -154,7 +153,6 @@ class _UserProfileModalState extends State<UserProfileModal> {
 
                     const SizedBox(height: 12),
 
-                    // Email (lecture seule)
                     CustomInputField(
                       label: 'Email',
                       hint: '',
@@ -164,7 +162,6 @@ class _UserProfileModalState extends State<UserProfileModal> {
                       message: null,
                     ),
 
-                    // Lien "Réinitialiser le mot de passe"
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -194,7 +191,6 @@ class _UserProfileModalState extends State<UserProfileModal> {
 
                     const SizedBox(height: 24),
 
-                    // Bouton Enregistrer aligné à droite
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -210,7 +206,6 @@ class _UserProfileModalState extends State<UserProfileModal> {
 
                     const SizedBox(height: 16),
 
-                    // Aide
                     Text(
                       'Astuce : le changement d’email ou la suppression de compte nécessite votre mot de passe (réauthentification).',
                       style: theme.textTheme.bodySmall,
@@ -218,7 +213,6 @@ class _UserProfileModalState extends State<UserProfileModal> {
 
                     const SizedBox(height: 16),
 
-                    // Lien rouge "Supprimer mon compte"
                     Builder(
                       builder: (ctx) {
                         final theme  = Theme.of(ctx);
@@ -235,7 +229,7 @@ class _UserProfileModalState extends State<UserProfileModal> {
                                 content: const DeleteAccountModal(),
                                 actions: const [],
                                 barrierDismissible: true,
-                                useRootNavigator: false, // pour voir les Providers
+                                useRootNavigator: false,
                               );
                             },
                             borderRadius: BorderRadius.circular(8),

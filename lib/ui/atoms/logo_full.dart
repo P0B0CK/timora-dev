@@ -5,7 +5,7 @@ import 'package:timora/theme/fonts.dart';
 
 class LogoFull extends StatelessWidget {
   final double height;
-  /// Si true, affiche le logo en colonne : icône au-dessus, texte dessous.
+  /// true = Colonne
   final bool stacked;
   final double spacing;
 

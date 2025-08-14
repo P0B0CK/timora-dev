@@ -6,7 +6,7 @@ class RightColumnActions extends StatefulWidget {
   final VoidCallback onCreateEvent;
   final VoidCallback onCreateCalendar;
   final VoidCallback onManageGroups;
-  final VoidCallback? onShare; // optionnel
+  final VoidCallback? onShare;
 
   final bool expanded;
   final Duration duration;
@@ -65,7 +65,6 @@ class _RightColumnActionsState extends State<RightColumnActions>
   @override
   void didUpdateWidget(covariant RightColumnActions oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // si onShare apparaît/disparaît → rebuild des intervalles
     if ((oldWidget.onShare != null) != (widget.onShare != null)) {
       _buildStaggers();
     }
@@ -86,7 +85,6 @@ class _RightColumnActionsState extends State<RightColumnActions>
 
   @override
   Widget build(BuildContext context) {
-    // Ordre top -> bottom : Partages → Groupes → +Agenda → +Événement
     int idx = 0;
 
     final children = <Widget>[];

@@ -1,7 +1,7 @@
 // lib/theme/timora_theme.dart
 import 'package:flutter/material.dart';
-import 'colors_extension.dart'; // barrel -> export 'app_colors_extension.dart'
-import 'themes.dart';           // barrel -> export 'theme_model.dart'
+import 'colors_extension.dart';
+import 'themes.dart';
 import 'fonts.dart';
 import 'fonts_extension.dart';
 
@@ -9,7 +9,6 @@ class TimoraTheme {
   static ThemeData build(ThemeModel model, {AppColors? override}) {
     final appColors = override ?? AppColors.fromThemeModel(model);
 
-    // ColorScheme M3 (on privilégie surface/onSurface)
     final colorScheme = ColorScheme.fromSeed(
       seedColor: appColors.primary,
       brightness: model.isDark ? Brightness.dark : Brightness.light,
@@ -25,10 +24,8 @@ class TimoraTheme {
       onError: Colors.white,
       surface: appColors.surface,
       onSurface: appColors.onSurface,
-      // background/onBackground non forcés : on utilise scaffoldBackgroundColor + textTheme.apply
     );
 
-    // TextTheme basé sur tes GoogleFonts, colorisé en neutre (onSurface)
     final textTheme = TextTheme(
       displayLarge: TimoraTextStyles.displayLarge,
       headlineMedium: TimoraTextStyles.headlineMedium,
@@ -40,7 +37,6 @@ class TimoraTheme {
       displayColor: appColors.onSurface,
     );
 
-    // Styles sémantiques brandés (primary) exposés via ThemeExtension
     final extraFonts = TimoraExtraTextStyles.fromColors(
       primary: appColors.primary,
       onSurface: appColors.onSurface,
@@ -49,17 +45,12 @@ class TimoraTheme {
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-
-      // Fond global des pages
       scaffoldBackgroundColor: appColors.background,
-
-      // Extensions disponibles partout (couleurs + fontes “brand”)
       extensions: [
         appColors,
         extraFonts,
       ],
 
-      // Typo unique (supprime la duplication précédente)
       textTheme: textTheme,
 
       dividerTheme: DividerThemeData(color: appColors.divider, thickness: 1),
@@ -105,8 +96,6 @@ class TimoraTheme {
         side: BorderSide(color: appColors.outline),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
-
-      // Boutons — garde ton usage de WidgetStateProperty si ton SDK le supporte
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.resolveWith((states) {

@@ -19,23 +19,16 @@ import 'package:timora/ui/routes/profile_modal_route.dart';
 class TimoraApp extends StatelessWidget {
   const TimoraApp({super.key});
 
-  // Petite fabrique pour éviter de dupliquer la config de TimoraScaffold
   Widget _buildHomeScaffold(BuildContext context) {
     return TimoraScaffold(
-      // centre (garde ce que tu veux)
-      onPrev: () {},
-      onNext: () {},
-
-      // GAUCHE —> branche les vrais handlers :
-      onOpenSettings: () => openSettingsModal(context), // <— OUVRE LA MODALE
-      onLogout: () => performLogout(context),           // <— OUVRE LA MODALE CONFIRM
-
-      // droite (exemples, garde/branche à ta guise)
-      onCreateCalendar: () {},
-      onCreateEvent: () {},
-      onManageGroups: () {},
-      onShare: () {},
-
+      //onPrev: () {},
+      //onNext: () {},
+      onOpenSettings: () => openSettingsModal(context),
+      onLogout: () => performLogout(context),
+      //onCreateCalendar: () {},
+      //onCreateEvent: () {},
+      //onManageGroups: () {},
+      //onShare: () {},
       child: HomePage(
         onPrev: () => debugPrint('prev'),
         onProfile: () => Navigator.pushNamed(context, '/profile'),
@@ -71,7 +64,6 @@ class TimoraApp extends StatelessWidget {
                 );
               }
               if (snapshot.hasData) {
-                // ✅ même config ici (pas de callbacks vides !)
                 return _buildHomeScaffold(context);
               }
               return const AuthLoginPage();

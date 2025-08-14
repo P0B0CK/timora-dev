@@ -8,34 +8,15 @@ import 'package:timora/theme/colors_extension.dart';
 enum AppIconStyle { alone, rounded }
 
 class AppIcon extends StatefulWidget {
-  /// Icône Flutter standard
   final IconData? icon;
-
-  /// Icône SVG depuis les assets
   final String? assetName;
-
-  /// Style visuel (icône seule ou pastille arrondie)
   final AppIconStyle style;
-
-  /// Taille de l’icône (en px)
   final double size;
-
-  /// Padding interne de la pastille (pour le style arrondi)
   final EdgeInsets padding;
-
-  /// Infobulle affichée au survol/long press
   final String? tooltip;
-
-  /// Callback au clic
   final VoidCallback? onPressed;
-
-  /// Icône désactivée (opacité réduite, sans clic)
   final bool isDisabled;
-
-  /// Animation de "push down" au clic
   final bool pushDown;
-
-  /// Facteur d’échelle lors du "push down"
   final double pressedScale;
 
   const AppIcon({

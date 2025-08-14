@@ -1,5 +1,6 @@
 // lib/ui/organisms/auth_login.dart
 import 'package:flutter/material.dart';
+
 import 'package:timora/ui/atoms/logo_full.dart';
 import 'package:timora/ui/atoms/button.dart';
 import 'package:timora/theme/colors_extension.dart';
@@ -37,15 +38,12 @@ class _AuthLoginPageState extends State<AuthLoginPage> with SingleTickerProvider
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, c) {
-            // Rectangle centré, allongé & responsive
             final shortest   = c.biggest.shortestSide;
             final cardWidth  = (shortest * 0.72).clamp(340.0, 520.0).toDouble();
             final cardHeight = (cardWidth * 1.35).clamp(440.0, 740.0).toDouble();
 
-            // Logo auto-dimensionné
             final logoHeight = (cardWidth * 0.15).clamp(52.0, 92.0).toDouble();
 
-            // Spacings
             const double vPad = 38;
             const double hPad = 28;
             const double gapLogoToSlogan  = 24;
@@ -53,7 +51,6 @@ class _AuthLoginPageState extends State<AuthLoginPage> with SingleTickerProvider
             const double gapBelowDivider  = 46;
             const double gapBetweenButtons = 16;
 
-            // Ombre douce (différente en dark/light)
             final BoxShadow softShadow = BoxShadow(
               color: (theme.brightness == Brightness.dark)
                   ? Colors.black.withOpacity(0.45)

@@ -1,3 +1,4 @@
+// lib/ui/molecules/delete_account_modal.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -80,7 +81,7 @@ class _DeleteAccountModalState extends State<DeleteAccountModal> {
           content: const ReauthDeleteModal(),
           actions: const [],
           barrierDismissible: true,
-          useRootNavigator: false, // garde l’accès aux Providers
+          useRootNavigator: false,
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -117,7 +118,6 @@ class _DeleteAccountModalState extends State<DeleteAccountModal> {
           ),
           const SizedBox(height: 12),
 
-          // Icône info + texte d'instruction
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -148,14 +148,12 @@ class _DeleteAccountModalState extends State<DeleteAccountModal> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // Annuler
               AppButton(
                 label: 'Annuler',
                 type: ButtonType.outlined,
                 onPressed: _deleting ? (){} : () => Navigator.of(context).pop(),
               ),
               const SizedBox(width: 12),
-              // Valider
               AppButton(
                 label: 'Valider',
                 onPressed: (!_isConfirmed || _deleting) ? (){} : _performDelete,

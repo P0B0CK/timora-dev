@@ -8,12 +8,9 @@ class AuthService {
   /// Écoute les changements d'état (connexion/déconnexion)
   Stream<User?> get userStream => _auth.authStateChanges();
 
-  /// Utilisateur courant
   User? get currentUser => _auth.currentUser;
 
-  // ---------------------------------------------------------------------------
   // Helpers Firestore
-  // ---------------------------------------------------------------------------
   Future<void> _createUserProfileIfNeeded(User user) async {
     final ref = _db.collection('users').doc(user.uid);
     final snap = await ref.get();
@@ -39,9 +36,7 @@ class AuthService {
     });
   }
 
-  // ---------------------------------------------------------------------------
   // Auth: Inscription / Connexion / Déconnexion
-  // ---------------------------------------------------------------------------
   Future<UserCredential> register({
     required String email,
     required String password,
@@ -81,9 +76,7 @@ class AuthService {
     await _auth.sendPasswordResetEmail(email: email);
   }
 
-  // ---------------------------------------------------------------------------
-  // Opérations sensibles: réauthentification
-  // ---------------------------------------------------------------------------
+  /// réauthentification
   Future<UserCredential> reauthenticate(String email, String password) async {
     final user = _auth.currentUser;
     if (user == null) {
@@ -96,9 +89,7 @@ class AuthService {
     return await user.reauthenticateWithCredential(cred);
   }
 
-  // ---------------------------------------------------------------------------
   // Édition de profil côté Auth (affichage)
-  // ---------------------------------------------------------------------------
   Future<void> updateDisplayName(String displayName) async {
     final user = _auth.currentUser;
     if (user == null) return;
@@ -106,11 +97,9 @@ class AuthService {
     await user.reload();
   }
 
-  // ---------------------------------------------------------------------------
-  // Changement d'email (protégé) - firebase_auth v6
-  // NOTE: updateEmail(...) a été retiré. Il faut utiliser verifyBeforeUpdateEmail.
-  // La mise à jour effective a lieu après que l'utilisateur clique le lien reçu.
-  // ---------------------------------------------------------------------------
+  // Approfondir lors de la communication app/user
+  // Changement d'email (protégé) - firebase_auth v6 (voir doc)
+  // Policy
   Future<void> updateEmailSecure(
       String newEmail, {
         required String currentEmail,
@@ -127,15 +116,14 @@ class AuthService {
     //    Tu peux passer _actionCodeSettings() ou simplement omettre l'argument.
     await user.verifyBeforeUpdateEmail(
       newEmail,
-      _actionCodeSettings(), // <-- positionnel optionnel
+      _actionCodeSettings(),
     );
 
     // 3) Après clic sur le lien, utilise finalizeEmailChangeSync() pour recharger
     //    l'utilisateur et synchroniser Firestore si tu stockes l'email.
   }
 
-  /// À appeler après que l'utilisateur ait validé le lien de changement d'email.
-  /// Recharge l'utilisateur et synchronise le champ `email` dans Firestore si besoin.
+  /// Changement d'email => Firestore
   Future<void> finalizeEmailChangeSync() async {
     final user = _auth.currentUser;
     if (user == null) return;
@@ -149,10 +137,10 @@ class AuthService {
     }
   }
 
-  /// ActionCodeSettings recommandé pour ramener l'utilisateur dans l'app
+  /// ActionCodeSettings = ramener l'utilisateur dans l'app
   ActionCodeSettings _actionCodeSettings() {
     return ActionCodeSettings(
-      url: 'https://timora.example.com/auth/finish-email-update', // TODO: remplace par ton URL
+      url: 'https://timora.example.com/auth/finish-email-update', // TODO
       handleCodeInApp: true,
       androidPackageName: 'com.timora.app', // TODO
       androidInstallApp: true,
@@ -161,9 +149,7 @@ class AuthService {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Suppression de compte (protégée)
-  // ---------------------------------------------------------------------------
+  // Suppression de compte
   Future<void> deleteAccount({
     required String currentEmail,
     required String currentPassword,
@@ -172,7 +158,7 @@ class AuthService {
     if (user == null) return;
     await reauthenticate(currentEmail, currentPassword);
     await user.delete();
-    // Optionnel : ton UI peut ensuite supprimer le doc Firestore users/{uid}
+    // Supprimer le doc Firestore users/{uid}
     // via UserRepository.deleteProfileDoc(uid).
   }
 }

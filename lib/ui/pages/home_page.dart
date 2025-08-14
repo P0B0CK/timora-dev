@@ -10,7 +10,6 @@ class HomePage extends StatelessWidget {
     try {
       await AuthService().logout();
       if (!context.mounted) return;
-      // 👉 on nettoie la stack et on revient sur l’écran de login
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
     } catch (e) {
       if (!context.mounted) return;

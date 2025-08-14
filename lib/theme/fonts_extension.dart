@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'fonts.dart'; // <- tes TimoraTextStyles (GoogleFonts)
+import 'fonts.dart';
 
 @immutable
 class TimoraExtraTextStyles extends ThemeExtension<TimoraExtraTextStyles> {
-  /// Titre brandé en primary (idéal pour headers/CTA sections)
   final TextStyle titleBrand;
 
-  /// Headline brandée en primary (sous-titres forts)
   final TextStyle headlineBrand;
 
-  /// Label “ultra bold” réutilisable
   final TextStyle labelBold;
 
   const TimoraExtraTextStyles({
@@ -18,7 +15,6 @@ class TimoraExtraTextStyles extends ThemeExtension<TimoraExtraTextStyles> {
     required this.labelBold,
   });
 
-  /// Construit l'extension en colorisant tes tokens avec les couleurs du thème
   factory TimoraExtraTextStyles.fromColors({
     required Color primary,
     required Color onSurface,

@@ -135,14 +135,12 @@ class _LoginPageState extends State<LoginPage> {
     final tokens  = theme.extension<AppColors>();
     final shortest= MediaQuery.of(context).size.shortestSide;
 
-    // Carte allongée responsive
+
     final cardWidth  = (shortest * 0.78).clamp(340.0, 560.0).toDouble();
     final baseCardHeight = (cardWidth * 1.42).clamp(440.0, 720.0).toDouble();
 
-    // Header (logo ligne)
     final logo = LogoFull(height: (cardWidth * 0.10).clamp(40.0, 72.0).toDouble(), stacked: false, spacing: 8);
 
-    // Ombre douce
     final BoxShadow softShadow = BoxShadow(
       color: (theme.brightness == Brightness.dark)
           ? Colors.black.withOpacity(0.45)
@@ -177,7 +175,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: vPad, horizontal: hPad),
-                // ⬇️ wrap le contenu dans un scroll qui ne s’active que si nécessaire
                 child: LayoutBuilder(
                   builder: (context, box) {
                     return SingleChildScrollView(
@@ -265,14 +262,12 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
 
-            // Scroll-safe + centrage (ou top) + anim + hauteur adaptable
             return SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
               padding: EdgeInsets.only(bottom: verticalPadding.toDouble()),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: availableHeight),
                 child: AnimatedAlign(
-                  // Quand le clavier est ouvert, on ancre la carte en haut pour éviter le “saut”
                   alignment: keyboardOpen ? Alignment.topCenter : Alignment.center,
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeOutCubic,

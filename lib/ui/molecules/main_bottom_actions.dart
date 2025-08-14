@@ -6,8 +6,6 @@ class MainBottomActions extends StatelessWidget {
   final VoidCallback? onPrev;
   final VoidCallback? onProfile;
   final VoidCallback? onNext;
-
-  // Toggle central optionnel
   final bool isExpanded;
   final VoidCallback? onToggle;
 
@@ -17,7 +15,7 @@ class MainBottomActions extends StatelessWidget {
     this.onProfile,
     this.onNext,
     this.isExpanded = false,
-    this.onToggle, // si null => pas d’icône more_vert au centre
+    this.onToggle,
   });
 
   @override

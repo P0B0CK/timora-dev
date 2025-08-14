@@ -47,7 +47,6 @@ Future<void> main() async {
 
   // APP LAUNCHER
   runApp(
-    // ⬇️ Fournis TOUS les providers AU-DESSUS de TimoraApp
     MultiProvider(
       providers: [
         // Services applicatifs
@@ -60,7 +59,7 @@ Future<void> main() async {
           ),
         ),
       ],
-      child: const _Bootstrap(), // gate d’amorçage avec loader
+      child: const _Bootstrap(), // gate => loader
     ),
   );
 }
@@ -105,7 +104,6 @@ class _BootstrapState extends State<_Bootstrap> {
             ),
           );
         }
-        // L’app complète (TimoraApp) voit maintenant AuthService & UserRepository
         return const TimoraApp();
       },
     );

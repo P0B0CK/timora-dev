@@ -13,18 +13,12 @@ class CustomInputField extends StatefulWidget {
   final TextEditingController controller;
   final bool isPassword;
   final TextInputType keyboardType;
-
   final InputStatus status;
   final String? message;
-
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
   final bool enabled;
-
-  /// Hauteur FIXE du champ
   final double height;
-
-  /// Padding interne (aération)
   final EdgeInsetsGeometry contentPadding;
 
   const CustomInputField({

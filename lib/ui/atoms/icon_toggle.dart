@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timora/theme/theme_manager.dart';        // <- manager
-import 'package:timora/theme/colors_extension.dart';     // <- tokens AppColors
+import 'package:timora/theme/colors_extension.dart';
 
 class ThemeToggleButton extends StatelessWidget {
   const ThemeToggleButton({super.key});
@@ -23,7 +23,7 @@ class ThemeToggleButton extends StatelessWidget {
       builder: (context, animatedColor, child) {
         return IconButton(
           tooltip: 'Basculer thème clair/sombre',
-          onPressed: () => context.read<ThemeManager>().toggleDuo(), // ou toggleBrother() si tu crées l’alias
+          onPressed: () => context.read<ThemeManager>().toggleDuo(),
           iconSize: 24,
           splashRadius: 24,
           icon: AnimatedSwitcher(
@@ -31,7 +31,6 @@ class ThemeToggleButton extends StatelessWidget {
             switchInCurve: Curves.easeOutCubic,
             switchOutCurve: Curves.easeInCubic,
             transitionBuilder: (widget, animation) {
-              // combo: scale + rotation + fade
               final fade = FadeTransition(opacity: animation, child: widget);
               final scale = ScaleTransition(scale: Tween<double>(begin: 0.85, end: 1).animate(animation), child: fade);
               final rotate = RotationTransition(
@@ -42,7 +41,7 @@ class ThemeToggleButton extends StatelessWidget {
             },
             child: Icon(
               isDark ? Icons.dark_mode : Icons.light_mode,
-              key: ValueKey<bool>(isDark), // important pour AnimatedSwitcher
+              key: ValueKey<bool>(isDark),
               color: animatedColor,
             ),
           ),

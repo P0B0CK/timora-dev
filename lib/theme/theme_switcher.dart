@@ -14,7 +14,7 @@ class ThemeSwitcher extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: manager.themeData,
-          // Si tu veux fournir aussi darkTheme séparée, tu peux générer la sœur ici :
+          // Réflexion : Fournir aussi darkTheme séparément
           // darkTheme: TimoraTheme.build(manager.catalog.firstWhere((t)=> t.duoId==manager.current.duoId && t.isDark)),
           home: child,
         );

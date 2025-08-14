@@ -37,22 +37,20 @@ class AppBottomBar extends StatefulWidget {
 }
 
 class _AppBottomBarState extends State<AppBottomBar> {
-  bool _expanded = true; // démarrage déployé (ajustez si besoin)
+  bool _expanded = true;
 
   void _toggle() => setState(() => _expanded = !_expanded);
 
   @override
   Widget build(BuildContext context) {
-    // Pas d’ombre ni box : on s’appuie uniquement sur la couleur de fond de l’app.
     return SafeArea(
       top: false,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end, // aligner les colonnes en bas
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            // Colonne gauche (flottante, animée)
             LeftColumnActions(
               onOpenSettings: widget.onOpenSettings ?? () => debugPrint('open settings'),
               onNotifications: widget.onNotifications ?? () => debugPrint('open notifications'),
@@ -60,7 +58,6 @@ class _AppBottomBarState extends State<AppBottomBar> {
               expanded: _expanded,
             ),
 
-            // Bloc central : prev / profile / next / more (toggle)
             MainBottomActions(
               onPrev: widget.onPrev ?? () => debugPrint('prev'),
               onProfile: widget.onProfile ?? () => debugPrint('profile'),
@@ -69,7 +66,6 @@ class _AppBottomBarState extends State<AppBottomBar> {
               onToggle: _toggle,
             ),
 
-            // Colonne droite (flottante, animée)
             RightColumnActions(
               onCreateCalendar: widget.onCreateCalendar ?? () => debugPrint('create calendar'),
               onCreateEvent: widget.onCreateEvent ?? () => debugPrint('create event'),

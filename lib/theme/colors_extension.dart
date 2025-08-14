@@ -6,10 +6,10 @@ import 'themes.dart';
 @immutable
 class AppColors extends ThemeExtension<AppColors> {
   // Couleurs de base
-  final Color background;     // fond global
-  final Color surface;        // surface cartes/panels
-  final Color onBackground;   // texte sur background
-  final Color onSurface;      // texte sur surface
+  final Color background;
+  final Color surface;
+  final Color onBackground;
+  final Color onSurface;
 
   // Actions / Accents
   final Color primary;
@@ -23,8 +23,8 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color disabled;
   final Color onDisabled;
   final Color divider;
-  final Color outline;        // bordures
-  final Color focus;          // focus ring
+  final Color outline;
+  final Color focus;
 
   // Feedback
   final Color success;
@@ -54,20 +54,19 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.info,
   });
 
-  /// Mapping light/dark : ici tu peux affiner précisément “qui devient quoi”
+  /// Mapping light/dark :
   static AppColors fromThemeModel(ThemeModel theme) {
     final p = theme.palette;
     final fb = theme.feedback;
 
     if (theme.isDark) {
-      // Dark: fonds sombres, texte clair
       return AppColors(
         background: p.backgroundColor,
         surface: Color.alphaBlend(Colors.white.withOpacity(0.03), p.backgroundColor),
         onBackground: p.textColorWhite,
         onSurface: p.textColorWhite.withOpacity(0.92),
         primary: p.primaryColor,
-        onPrimary: p.textColorBlack, // sur primaire, on garde noir si vert clair
+        onPrimary: p.textColorBlack,
         secondary: p.secondaryColor,
         onSecondary: p.textColorWhite,
         tertiary: p.tertiaryColor,

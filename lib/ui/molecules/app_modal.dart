@@ -133,7 +133,6 @@ class _AppModalCardState<T> extends State<_AppModalCard<T>> with SingleTickerPro
     final media    = MediaQuery.of(context);
     final shortest = media.size.shortestSide;
 
-    // Largeur responsive (comme auth)
     final cardWidth = (shortest * 0.72).clamp(320.0, 520.0).toDouble();
 
     // Style
@@ -147,20 +146,17 @@ class _AppModalCardState<T> extends State<_AppModalCard<T>> with SingleTickerPro
       offset: const Offset(0, 18),
     );
 
-    // Paddings internes
+    // PADDINGS
     const vPad = 32.0;
     const hPad = 24.0;
 
-    // Clavier & plafonnement de hauteur
+    // Ouverture du clavier tactile
     final bottomInset      = media.viewInsets.bottom;
     final keyboardOpen     = bottomInset > 0;
-    final double safeGap   = 28.0; // marge visuelle top/bottom hors clavier
+    final double safeGap   = 28.0;
     final double outerPad  = keyboardOpen ? (bottomInset + 16.0) : safeGap;
-
-    // 👉 plafond de hauteur pour que la carte ne déborde jamais l’écran
     final double maxCardHeight = (media.size.height - outerPad - safeGap).clamp(280.0, media.size.height);
 
-    // Gaps
     final double gapTop    = _scaledGap(widget.gapTitleToContent,  media.textScaleFactor);
     final double gapBottom = _scaledGap(widget.gapContentToActions, media.textScaleFactor);
 
@@ -193,7 +189,6 @@ class _AppModalCardState<T> extends State<_AppModalCard<T>> with SingleTickerPro
       ),
     );
 
-    // ——— Carte responsive EN HAUTEUR ———
     final card = DecoratedBox(
       decoration: BoxDecoration(
         color: surface,
@@ -207,16 +202,14 @@ class _AppModalCardState<T> extends State<_AppModalCard<T>> with SingleTickerPro
           constraints: BoxConstraints(
             minWidth: cardWidth,
             maxWidth: cardWidth,
-            // 🔥 Plafond de hauteur — si le contenu dépasse, la zone centrale scrolle
             maxHeight: maxCardHeight,
           ),
           child: Column(
-            mainAxisSize: MainAxisSize.min, // ← ajuste à la taille du contenu si petit
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               titleWidget,
               SizedBox(height: gapTop),
-              // zone scrollable qui prend le reste *si besoin*
               Flexible(
                 fit: FlexFit.loose,
                 child: SingleChildScrollView(

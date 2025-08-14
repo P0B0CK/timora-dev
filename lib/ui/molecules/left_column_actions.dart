@@ -6,8 +6,6 @@ class LeftColumnActions extends StatefulWidget {
   final VoidCallback onOpenSettings;
   final VoidCallback onLogout;
   final VoidCallback onNotifications;
-
-  /// contrôle externe
   final bool expanded;
   final Duration duration;
 
@@ -34,10 +32,9 @@ class _LeftColumnActionsState extends State<LeftColumnActions>
   void initState() {
     super.initState();
     _ctrl = AnimationController(vsync: this, duration: widget.duration);
-    // Important : rebuild à chaque tick pour que IgnorePointer suive l’état
+    // Important : rebuild
     _ctrl.addListener(() => setState(() {}));
 
-    // Stagger (cascade)
     const step = 0.20; // 20% de la durée
     _opacities = List.generate(3, (i) {
       final start = (i * step).clamp(0.0, 1.0);
@@ -120,7 +117,6 @@ class _LeftColumnActionsState extends State<LeftColumnActions>
     ];
 
     return IgnorePointer(
-      // ✅ ne bloque que lorsqu’elle est complètement repliée
       ignoring: _ctrl.isDismissed,
       child: Column(mainAxisSize: MainAxisSize.min, children: items),
     );

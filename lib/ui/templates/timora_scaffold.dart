@@ -6,7 +6,6 @@ import 'package:timora/ui/molecules/left_column_actions.dart';
 import 'package:timora/ui/molecules/right_column_actions.dart';
 import 'package:timora/ui/atoms/icon.dart';
 import 'package:timora/ui/utils/logout_helper.dart';
-// ⬇️ importe la modale Paramètres
 import 'package:timora/ui/organisms/settings_modal.dart';
 
 import '../molecules/app_modal.dart';
@@ -22,7 +21,7 @@ class TimoraScaffold extends StatefulWidget {
 
   // gauche
   final VoidCallback? onOpenSettings;
-  final VoidCallback? onLogout;         // si null => fallback modale
+  final VoidCallback? onLogout;
   final VoidCallback? onNotifications;
 
   // droite
@@ -65,11 +64,8 @@ class _TimoraScaffoldState extends State<TimoraScaffold> {
     final media = MediaQuery.of(context);
     final bottomGap = widget.bottomBarHeight + media.padding.bottom + 8;
 
-    // 🔎 Trace quel chemin va être pris
     final hasCustomLogout = widget.onLogout != null;
     debugPrint('[TimoraScaffold] build; hasCustomLogout=$hasCustomLogout');
-
-    // ✅ Wrap du callback pour LOG + garantir la modale en fallback
     final VoidCallback _logoutTap = hasCustomLogout
         ? () {
       debugPrint('[TimoraScaffold] invoking CUSTOM onLogout');
@@ -77,7 +73,7 @@ class _TimoraScaffoldState extends State<TimoraScaffold> {
     }
         : () {
       debugPrint('[TimoraScaffold] fallback logout -> modal');
-      performLogout(context); // ouvre la modale
+      performLogout(context);
     };
 
     return Scaffold(
@@ -89,7 +85,6 @@ class _TimoraScaffoldState extends State<TimoraScaffold> {
         children: [
           Positioned.fill(child: widget.child),
 
-          // Colonne gauche + toggle
           Positioned(
             left: 12,
             bottom: bottomGap,
@@ -123,7 +118,6 @@ class _TimoraScaffoldState extends State<TimoraScaffold> {
             ),
           ),
 
-          // Colonne droite + toggle
           Positioned(
             right: 12,
             bottom: bottomGap,
@@ -158,7 +152,6 @@ class _TimoraScaffoldState extends State<TimoraScaffold> {
             ),
           ),
 
-          // Barre du bas (centre)
           Positioned(
             left: 0,
             right: 0,

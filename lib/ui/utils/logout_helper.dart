@@ -4,8 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:timora/services/auth_service.dart';
 import 'package:timora/ui/molecules/app_modal.dart';
 
-/// Déconnecte l'utilisateur avec confirmation.
-/// [forceToLogin]: si true, on remplace la pile par '/login'.
+/// Déconnecte l'utilisateur
 Future<void> performLogout(BuildContext context, {bool forceToLogin = false}) async {
   debugPrint('[LogoutHelper] performLogout called (mounted=${context.mounted})');
 
@@ -20,12 +19,12 @@ Future<void> performLogout(BuildContext context, {bool forceToLogin = false}) as
 
   debugPrint('[LogoutHelper] opening confirm modal…');
   final confirm = await showAppConfirmDialog(
-    context: safeContext,             // 👈 context d’overlay root
+    context: safeContext,
     title: 'Se déconnecter ?',
     message: 'Vous allez être déconnecté de Timora. Continuer ?',
     confirmLabel: 'Se déconnecter',
     cancelLabel: 'Annuler',
-    useRootNavigator: true,           // 👈 route sur le root navigator
+    useRootNavigator: true,
   );
 
   debugPrint('[LogoutHelper] confirm result = $confirm');
