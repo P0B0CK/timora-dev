@@ -3,34 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'theme/theme_manager.dart';
-import 'theme/themes.dart';              // themeCatalog (barrel vers theme_model.dart)
+import 'theme/themes.dart';
 import 'app/timora_app.dart';
-import 'firebase_options.dart';          // généré par FlutterFire CLI
-import 'env.dart';                       // AppConfig (dev/staging/prod)
-import 'ui/molecules/loader.dart';       // AppLoader
+import 'firebase_options.dart';
+import 'env.dart';
+import 'ui/molecules/loader.dart';
+import 'services/auth_service.dart';
+import 'services/user_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  /// =========
-  ///  BACKEND
-  /// =========
+  // BACKEND
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  /// =================
-  ///  APP ORIENTATION
-  /// =================
+  // ORIENTATION
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
 
-  /// ====================
-  ///  MULTI ENVIRONMENT
-  /// ====================
+  // ENV
   const String flavor = String.fromEnvironment('FLAVOR');
   late AppEnvironment environment;
   debugPrint("FLAVOR = $flavor");
@@ -48,28 +43,30 @@ Future<void> main() async {
     default:
       throw Exception("Unknown flavor : $flavor");
   }
-
   AppConfig.initialize(environment);
 
-  /// ===============
-  ///  APP LAUNCHER
-  /// ===============
+  // APP LAUNCHER
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeManager(
-        initial: themeCatalog.firstWhere((t) => t.id == 'classic-dark'),
-      ),
-      child: const _Bootstrap(), // ⬅️ gate d’amorçage avec loader
+    // ⬇️ Fournis TOUS les providers AU-DESSUS de TimoraApp
+    MultiProvider(
+      providers: [
+        // Services applicatifs
+        Provider<AuthService>(create: (_) => AuthService()),
+        Provider<UserRepository>(create: (_) => UserRepository()),
+        // Thème
+        ChangeNotifierProvider(
+          create: (_) => ThemeManager(
+            initial: themeCatalog.firstWhere((t) => t.id == 'classic-dark'),
+          ),
+        ),
+      ],
+      child: const _Bootstrap(), // gate d’amorçage avec loader
     ),
   );
 }
 
-/// ===============
-///  LOADER
-/// ===============
 class _Bootstrap extends StatefulWidget {
   const _Bootstrap({super.key});
-
   @override
   State<_Bootstrap> createState() => _BootstrapState();
 }
@@ -84,8 +81,6 @@ class _BootstrapState extends State<_Bootstrap> {
   }
 
   Future<void> _initialize() async {
-    // Ici tu peux ajouter d’autres inits (Remote Config, prefs, etc.)
-    // On impose un petit délai mini pour que le loader soit visible (fluidité).
     await Future.delayed(const Duration(milliseconds: 850));
   }
 
@@ -96,8 +91,8 @@ class _BootstrapState extends State<_Bootstrap> {
     return FutureBuilder<void>(
       future: _preload,
       builder: (context, snap) {
-        // Tant que ce n’est pas prêt → MaterialApp minimal + loader full-screen
         if (snap.connectionState != ConnectionState.done) {
+          // Loader plein écran le temps du préchargement
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: theme,
@@ -110,8 +105,7 @@ class _BootstrapState extends State<_Bootstrap> {
             ),
           );
         }
-
-        // Prêt → lance l’app
+        // L’app complète (TimoraApp) voit maintenant AuthService & UserRepository
         return const TimoraApp();
       },
     );

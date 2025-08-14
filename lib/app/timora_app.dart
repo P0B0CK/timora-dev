@@ -12,9 +12,9 @@ import 'package:timora/ui/templates/timora_scaffold.dart';
 import 'package:timora/ui/molecules/loader.dart';
 import 'package:timora/theme/theme_manager.dart';
 
-// ✅ handlers
 import 'package:timora/ui/utils/logout_helper.dart';
 import 'package:timora/ui/organisms/settings_modal.dart';
+import 'package:timora/ui/routes/profile_modal_route.dart';
 
 class TimoraApp extends StatelessWidget {
   const TimoraApp({super.key});
@@ -24,7 +24,6 @@ class TimoraApp extends StatelessWidget {
     return TimoraScaffold(
       // centre (garde ce que tu veux)
       onPrev: () {},
-      onProfile: () {},
       onNext: () {},
 
       // GAUCHE —> branche les vrais handlers :
@@ -56,11 +55,8 @@ class TimoraApp extends StatelessWidget {
           routes: {
             '/login': (context) => const LoginPage(),
             '/register': (context) => const RegisterPage(),
-
-            // ✅ la route /home utilise la même config câblée
             '/home': (context) => _buildHomeScaffold(context),
-
-            '/profile': (context) => const Placeholder(), // à remplacer
+            '/profile': (context) => const ProfileModalRoute(),
           },
           home: StreamBuilder<User?>(
             stream: AuthService().userStream,

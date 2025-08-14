@@ -9,6 +9,9 @@ import 'package:timora/ui/utils/logout_helper.dart';
 // ⬇️ importe la modale Paramètres
 import 'package:timora/ui/organisms/settings_modal.dart';
 
+import '../molecules/app_modal.dart';
+import '../organisms/user_profile_modal.dart';
+
 class TimoraScaffold extends StatefulWidget {
   final Widget child;
 
@@ -165,7 +168,16 @@ class _TimoraScaffoldState extends State<TimoraScaffold> {
                 height: widget.bottomBarHeight,
                 child: MainBottomActions(
                   onPrev: widget.onPrev,
-                  onProfile: widget.onProfile,
+                  onProfile: widget.onProfile ?? () {
+                    showAppModal<void>(
+                      context: context,
+                      title: 'Mon profil',
+                      content: const UserProfileModal(),
+                      actions: const [],
+                      barrierDismissible: true,
+                      useRootNavigator: false,
+                    );
+                  },
                   onNext: widget.onNext,
                 ),
               ),

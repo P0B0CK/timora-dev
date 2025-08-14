@@ -8,7 +8,6 @@ class UserRepository {
     final ref = _db.collection('users').doc(user.uid);
     final snap = await ref.get();
     if (snap.exists) return; // idempotent
-
     await ref.set({
       'uid': user.uid,
       'email': user.email,
@@ -23,9 +22,25 @@ class UserRepository {
     return _db.collection('users').doc(uid).get();
   }
 
+  /// Écoute en temps réel
+  Stream<DocumentSnapshot<Map<String, dynamic>>> listenMe(String uid) {
+    return _db.collection('users').doc(uid).snapshots();
+  }
+
+  /// Mise à jour partielle (clés autorisées côté UI)
+  Future<void> updateMe(String uid, Map<String, dynamic> data) async {
+    data['updatedAt'] = FieldValue.serverTimestamp();
+    await _db.collection('users').doc(uid).set(data, SetOptions(merge: true));
+  }
+
   Future<void> touchUpdatedAt(String uid) {
     return _db.collection('users').doc(uid).update({
       'updatedAt': FieldValue.serverTimestamp(),
     });
+  }
+
+  /// Suppression du document profil (appelé après suppression compte Auth)
+  Future<void> deleteProfileDoc(String uid) {
+    return _db.collection('users').doc(uid).delete();
   }
 }
