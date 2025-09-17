@@ -1,14 +1,11 @@
+# ------------------------------
 # Flutter & Dart
+# ------------------------------
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 .packages
 build/
-ios/Flutter/Flutter.framework
-ios/Flutter/Flutter.podspec
-ios/Flutter/Generated.xcconfig
-ios/Runner.xcodeproj/project.xcworkspace/
-ios/Pods/
 pubspec.lock
 .melody/
 
@@ -19,14 +16,12 @@ android/local.properties
 android/.idea/
 *.iml
 
-# VS Code
-.vscode/
-
-# Xcode
-DerivedData/
-xcuserdata/
-*.xcworkspace
-*.xcuserstate
+# iOS
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Runner.xcodeproj/project.xcworkspace/
+ios/Pods/
 
 # macOS
 macos/Flutter/GeneratedPluginRegistrant.swift
@@ -40,19 +35,66 @@ windows/runner/ephemeral/
 web/.dart_tool/
 web/build/
 
-# Firebase
-**/google-services.json
-**/GoogleService-Info.plist
-.firebase/
-lib/firebase_options.dart
+# VS Code
+.vscode/
 
-# Logs & Secrets
-*.log
-.env
-.env.*
+# Xcode
+DerivedData/
+xcuserdata/
+*.xcworkspace
+*.xcuserstate
 
-# JetBrains (Android Studio)
+# JetBrains (Android Studio / IntelliJ)
 .idea/
 
+# ------------------------------
+# Firebase
+# ------------------------------
+**/google-services.json
+**/GoogleService-Info.plist
+lib/firebase_options.dart   # généré par flutterfire configure
+.firebase/                  # données des émulateurs Firebase
+firebase-debug.log
+emulator-data/
+
+# Firestore rules / index (on les garde dans Git !)
+# firestore.rules
+# firestore.indexes.json
+
+# ------------------------------
+# Firebase Functions (Node/TS)
+# ------------------------------
+functions/node_modules/
+functions/lib/                 # build JS (sortie de tsc)
+functions/.runtimeconfig.json  # ancien fichier de config sensitive
+functions/.env
+functions/.env.*
+functions/.secret
+functions/*.local.json
+
+# ------------------------------
+# Logs & Secrets
+# ------------------------------
+*.log
+functions/.env
+.env.*
+
+# Clés & certificats sensibles
+serviceAccountKey.json
+*.p12
+*.pem
+*.key
+
+# ------------------------------
 # Others
+# ------------------------------
 .sentryclirc
+
+# Cursor
+.cursor/
+.cursorrules
+
+# IDE
+.vscode/settings.json
+.idea/workspace.xml
+.idea/tasks.xml

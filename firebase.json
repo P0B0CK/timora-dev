@@ -1,1 +1,39 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"timora-dev","appId":"1:544932591903:android:647a87cb6d22e47f28582a","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"timora-dev","configurations":{"android":"1:544932591903:android:647a87cb6d22e47f28582a","ios":"1:544932591903:ios:8b216b6644b202b728582a"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "timora-dev",
+          "appId": "1:544932591903:android:647a87cb6d22e47f28582a",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "timora-dev",
+          "configurations": {
+            "android": "1:544932591903:android:647a87cb6d22e47f28582a",
+            "ios": "1:544932591903:ios:8b216b6644b202b728582a"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ]
+}

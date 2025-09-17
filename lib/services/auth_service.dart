@@ -118,9 +118,6 @@ class AuthService {
       newEmail,
       _actionCodeSettings(),
     );
-
-    // 3) Après clic sur le lien, utilise finalizeEmailChangeSync() pour recharger
-    //    l'utilisateur et synchroniser Firestore si tu stockes l'email.
   }
 
   /// Changement d'email => Firestore

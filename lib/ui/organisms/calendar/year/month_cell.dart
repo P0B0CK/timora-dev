@@ -1,26 +1,26 @@
-// lib/ui/organisms/calendar/year/month_cell.dart
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:timora/ui/utils/date_utils.dart';
 
 class MonthCell extends StatelessWidget {
-  final DateTime yearAnchor; // 1er janvier de l'année affichée
-  final int month;           // 1..12
+  final DateTime yearAnchor;
+  final int month;
   final int? eventCount;
   final VoidCallback? onTap;
+
   const MonthCell({
     super.key,
     required this.yearAnchor,
     required this.month,
     this.eventCount,
-    this.onTap,
+    this.onTap, String? calendarId,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final date = DateTime(yearAnchor.year, month, 1);
-    final loc = Localizations.localeOf(context).toString();
-    final monthName = DateFormat.MMMM(loc).format(date);
+    final monthName = formatMonthName(context, date); // 👈 appel util
+
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -32,23 +32,28 @@ class MonthCell extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text('${monthName[0].toUpperCase()}${monthName.substring(1)}',
-                    style: theme.textTheme.titleMedium),
-                if ((eventCount ?? 0) > 0)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(999),
-                      color: theme.colorScheme.primary.withOpacity(.12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(monthName, style: theme.textTheme.titleMedium),
+                  if ((eventCount ?? 0) > 0)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(999),
+                        color: theme.colorScheme.primary.withOpacity(.12),
+                      ),
+                      child: Text('${eventCount!}', style: theme.textTheme.labelMedium),
                     ),
-                    child: Text('${eventCount!}', style: theme.textTheme.labelMedium),
-                  ),
-              ]),
+                ],
+              ),
               const Spacer(),
-              Text('mini-cal', style: theme.textTheme.bodySmall!.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(.6),
-              )),
+              Text(
+                'mini-cal',
+                style: theme.textTheme.bodySmall!.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(.6),
+                ),
+              ),
             ],
           ),
         ),

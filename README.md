@@ -46,4 +46,6 @@ lib/
 └── main.dart       # Point d’entrée
 ```
 
+## Environments cmd
 
+- flutter run --flavor dev -t lib/main.dart --dart-define=FLAVOR=dev

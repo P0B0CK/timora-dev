@@ -6,9 +6,8 @@ plugins {
 
 android {
     namespace = "timora.develop.timora"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
-    ndkVersion = "27.0.12077973"
+    compileSdk = 35
+    buildToolsVersion = "35.0.0"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -22,7 +21,7 @@ android {
     defaultConfig {
         applicationId = "timora.dev.app"
         minSdk = 23
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

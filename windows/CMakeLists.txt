@@ -2,6 +2,23 @@
 cmake_minimum_required(VERSION 3.14)
 project(timora LANGUAGES CXX)
 
+# --- Durcit le standard + neutralise les warnings MSVC "unsafe" (strncpy) et "warnings as errors"
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if (MSVC)
+  add_compile_definitions(
+    _CRT_SECURE_NO_WARNINGS
+    _SCL_SECURE_NO_WARNINGS
+  )
+  add_compile_options(
+    /wd4996   # masque C4996 (strncpy déprécié)
+    /WX-      # n'élève pas les warnings en erreurs
+    /EHsc     # exceptions C++ sûres
+    /permissive-  # mode C++ standard strict
+  )
+endif()
+
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
 set(BINARY_NAME "timora")
