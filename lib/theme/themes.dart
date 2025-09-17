@@ -40,7 +40,6 @@ const List<ThemeModel> themeCatalog = [
     isPremium: false,
     palette: timoraClassic,
   ),
-  // (exemple si tu veux mixer) : variantes twin BW
   ThemeModel(
     id: 'twinbw-dark',
     duoId: 'twinbw',
