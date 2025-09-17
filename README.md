@@ -49,3 +49,8 @@ lib/
 ## Environments cmd
 
 - flutter run --flavor dev -t lib/main.dart --dart-define=FLAVOR=dev
+
+## tests cmd
+
+- flutter test -r expanded
+- flutter test integration_test/signin_and_home_flow_test.dart -r expanded 
